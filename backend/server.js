@@ -29,7 +29,7 @@ app.get("/api/validate", async (req, res) => {
   }
 
   try {
-    const url = `https://phonevalidation.abstractapi.com/v1/?api_key=${API_KEY}&phone=${encodeURIComponent(phone)}`;
+    const url = `https://phoneintelligence.abstractapi.com/v1/?api_key=${API_KEY}&phone=${encodeURIComponent(phone)}`;
     const response = await fetch(url);
 
     if (!response.ok) {
