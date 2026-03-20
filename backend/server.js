@@ -40,9 +40,8 @@ app.get("/api/validate", async (req, res) => {
     const data = await response.json();
 
     // Enrich with troubleshooting hints
-    const hints = generateTroubleshootingHints(data, phone);
-
-    return res.json({ ...data, troubleshooting: hints });
+    return res.json(data);
+    
   } catch (err) {
     console.error("Erro ao chamar AbstractAPI:", err);
     return res.status(500).json({ error: "Falha ao consultar a API externa." });
