@@ -248,7 +248,7 @@
     .validity-badge.valid   { background: rgba(0,255,157,0.08); border-right: 1px solid rgba(0,255,157,0.2); }
     .validity-badge.invalid { background: rgba(255,59,92,0.08);  border-right: 1px solid rgba(255,59,92,0.2); }
 
-    .badge-icon { font-size: 2rem; line-height: 1; margin-bottom: 6px; }
+    .badge-icon  { font-size: 2rem; line-height: 1; margin-bottom: 6px; }
     .badge-label { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; }
     .validity-badge.valid   .badge-label { color: var(--accent2); }
     .validity-badge.invalid .badge-label { color: var(--danger); }
@@ -306,6 +306,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .panel-badge {
@@ -316,8 +317,9 @@
       letter-spacing: 1px;
     }
 
-    .panel-badge.abr { background: rgba(0,255,157,0.15); color: var(--accent2); border: 1px solid rgba(0,255,157,0.3); }
-    .panel-badge.br  { background: rgba(255,184,0,0.12); color: var(--warn);    border: 1px solid rgba(255,184,0,0.3); }
+    .panel-badge.lib { background: rgba(0,212,255,0.12); color: var(--accent);  border: 1px solid rgba(0,212,255,0.3); }
+    .panel-badge.nv  { background: rgba(255,184,0,0.12); color: var(--warn);    border: 1px solid rgba(255,184,0,0.3); }
+    .panel-badge.br  { background: rgba(0,255,157,0.10); color: var(--accent2); border: 1px solid rgba(0,255,157,0.3); }
 
     .kv { display: flex; flex-direction: column; gap: 10px; }
 
@@ -328,8 +330,8 @@
       gap: 12px;
     }
 
-    .kv-key  { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); flex-shrink: 0; }
-    .kv-val  { font-family: var(--mono); font-size: 0.82rem; color: var(--text); text-align: right; word-break: break-all; }
+    .kv-key { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); flex-shrink: 0; }
+    .kv-val { font-family: var(--mono); font-size: 0.82rem; color: var(--text); text-align: right; word-break: break-all; }
     .kv-val.green  { color: var(--accent2); }
     .kv-val.blue   { color: var(--accent); }
     .kv-val.yellow { color: var(--warn); }
@@ -359,99 +361,6 @@
     .fmt-number.intl     { color: var(--accent2); border-color: rgba(0,255,157,0.2); }
     .fmt-number.local    { color: var(--accent);  border-color: rgba(0,212,255,0.2); }
 
-    /* ── PORTABILITY ── */
-    #portability-panel { margin-bottom: 24px; }
-
-    .carrier-current {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 14px 18px;
-      background: rgba(0,255,157,0.05);
-      border: 1px solid rgba(0,255,157,0.15);
-      border-radius: 4px;
-      margin-bottom: 16px;
-    }
-
-    .carrier-icon { font-size: 1.4rem; }
-    .carrier-info { display: flex; flex-direction: column; gap: 2px; }
-
-    .carrier-label {
-      font-family: var(--mono);
-      font-size: 0.58rem;
-      color: var(--text-dim);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .carrier-name {
-      font-family: var(--cond);
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--accent2);
-      letter-spacing: 1px;
-    }
-
-    .carrier-sigla { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); }
-
-    .port-history-title {
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    .port-timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
-
-    .port-timeline::before {
-      content: '';
-      position: absolute;
-      left: 11px; top: 0; bottom: 0;
-      width: 1px;
-      background: var(--border);
-    }
-
-    .port-event {
-      display: flex;
-      gap: 16px;
-      padding: 10px 0;
-      position: relative;
-      animation: slideIn 0.3s ease both;
-    }
-
-    .port-dot {
-      width: 23px; height: 23px;
-      border-radius: 50%;
-      background: var(--panel);
-      border: 2px solid var(--accent);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.6rem;
-      color: var(--accent);
-      z-index: 1;
-      margin-top: 2px;
-    }
-
-    .port-content { display: flex; flex-direction: column; gap: 3px; }
-    .port-date    { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); }
-    .port-carriers { font-family: var(--mono); font-size: 0.82rem; color: var(--text); }
-    .port-arrow   { color: var(--accent); margin: 0 6px; }
-    .port-empty   { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); padding: 10px 0; }
-
-    .port-error {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--warn);
-      background: rgba(255,184,0,0.05);
-      border: 1px solid rgba(255,184,0,0.2);
-      border-radius: 3px;
-      padding: 10px 14px;
-    }
-
     /* ── DIALING GUIDE ── */
     #dialing-panel { margin-bottom: 24px; }
 
@@ -464,8 +373,8 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .dialing-flag { font-size: 1.6rem; }
-    .dialing-meta { display: flex; flex-direction: column; gap: 2px; }
+    .dialing-flag    { font-size: 1.6rem; }
+    .dialing-meta    { display: flex; flex-direction: column; gap: 2px; }
     .dialing-country { font-family: var(--cond); font-size: 1rem; font-weight: 700; color: #fff; }
     .dialing-ddi     { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); }
 
@@ -492,18 +401,14 @@
       background: rgba(255,255,255,0.02);
       border: 1px solid var(--border);
       border-radius: 3px;
-      transition: border-color 0.2s, background 0.2s;
       cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
     }
 
-    .dialing-option:hover {
-      border-color: var(--accent);
-      background: rgba(0,212,255,0.04);
-    }
-
+    .dialing-option:hover { border-color: var(--accent); background: rgba(0,212,255,0.04); }
     .dialing-option:hover .dial-copy { opacity: 1; }
 
-    .dial-left   { display: flex; flex-direction: column; gap: 3px; }
+    .dial-left    { display: flex; flex-direction: column; gap: 3px; }
     .dial-carrier { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
     .dial-string  { font-family: var(--mono); font-size: 1.05rem; color: var(--accent2); letter-spacing: 1px; }
     .dial-copy    { font-family: var(--mono); font-size: 0.6rem; color: var(--accent); opacity: 0; transition: opacity 0.2s; letter-spacing: 1px; }
@@ -661,29 +566,34 @@
         Analisar
       </button>
     </div>
-    <div class="search-hint">» Digite com DDI (ex: +55 para Brasil). Números BR: consulta portabilidade via ABR Telecom.</div>
+    <div class="search-hint">» Digite com DDI (ex: +55 para Brasil, +1 para EUA). Análise via libphonenumber + Numverify.</div>
   </section>
 
   <div id="loader">
     <div class="loader-ring"></div>
-    <div class="loader-text" id="loader-text">CONSULTANDO...</div>
+    <div class="loader-text" id="loader-text">ANALISANDO...</div>
   </div>
 
   <div id="error-box"></div>
 
   <div id="results">
 
+    <!-- Summary strip -->
     <div class="summary-strip">
       <div class="validity-badge" id="validity-badge">
-        <div class="badge-icon" id="badge-icon"></div>
+        <div class="badge-icon"  id="badge-icon"></div>
         <div class="badge-label" id="badge-label"></div>
       </div>
       <div class="summary-fields" id="summary-fields"></div>
     </div>
 
+    <!-- Format + Line info -->
     <div class="panels">
       <div class="panel">
-        <div class="panel-title">// Comparação de formatos</div>
+        <div class="panel-title">
+          // Comparação de formatos
+          <span class="panel-badge lib">LIBPHONENUMBER</span>
+        </div>
         <div class="fmt-row" id="fmt-row"></div>
       </div>
       <div class="panel">
@@ -692,23 +602,7 @@
       </div>
     </div>
 
-    <!-- PORTABILITY (BR only) -->
-    <div id="portability-panel" style="display:none">
-      <div class="section-divider">
-        <div class="section-label">// Portabilidade numérica</div>
-        <div class="section-divider-line"></div>
-      </div>
-      <div class="panel">
-        <div class="panel-title">
-          // Consulta ABR Telecom
-          <span class="panel-badge abr">ABR TELECOM</span>
-          <span class="panel-badge br">🇧🇷 BR</span>
-        </div>
-        <div id="portability-content"></div>
-      </div>
-    </div>
-
-    <!-- DIALING GUIDE (international dest) -->
+    <!-- Dialing guide (international dest only) -->
     <div id="dialing-panel" style="display:none">
       <div class="section-divider">
         <div class="section-label">// Guia de discagem internacional</div>
@@ -736,7 +630,7 @@
 </div>
 
 <footer>
-  <span>LIBPHONEX v2.1 · AbstractAPI + ABR Telecom</span>
+  <span>LIBPHONEX v2.2 · libphonenumber + Numverify</span>
   <span id="last-query">—</span>
   <a class="footer-author" href="https://github.com/maiconcubero" target="_blank" rel="noopener">
     <div class="footer-author-dot"></div>
@@ -746,14 +640,16 @@
 
 <script>
   const BACKEND_URL = "https://apis-telcox.onrender.com";
-  const hintIcons = { error:"🔴", warning:"🟡", info:"🔵", success:"🟢" };
+  const hintIcons   = { error:"🔴", warning:"🟡", info:"🔵", success:"🟢" };
+
+  // ── MAIN ────────────────────────────────────────────────
 
   async function validatePhone() {
     const input = document.getElementById("phone-input");
     const phone = input.value.trim();
     if (!phone) { showError("Digite um número de telefone para analisar."); return; }
 
-    setLoading(true, "CONSULTANDO ABSTRACT API...");
+    setLoading(true, "ANALISANDO COM LIBPHONENUMBER...");
     hideAll();
 
     try {
@@ -775,15 +671,18 @@
   // ── RENDER ──────────────────────────────────────────────
 
   function renderResults(data, rawPhone) {
+    // Badge
     const badge = document.getElementById("validity-badge");
     badge.className = `validity-badge ${data.valid ? "valid" : "invalid"}`;
     document.getElementById("badge-icon").textContent  = data.valid ? "✓" : "✗";
     document.getElementById("badge-label").textContent = data.valid ? "VÁLIDO" : "INVÁLIDO";
 
-    const abrTag = data.portability?.currentCarrier
-      ? ' <span style="font-size:0.55rem;color:var(--accent2);border:1px solid rgba(0,255,157,0.3);padding:1px 5px;border-radius:2px">ABR</span>'
+    // Carrier source tag
+    const srcTag = data._meta?.carrierSource && !data._meta.carrierSource.includes("sem retorno")
+      ? ` <span style="font-size:0.55rem;color:var(--warn);border:1px solid rgba(255,184,0,0.3);padding:1px 5px;border-radius:2px">NV</span>`
       : '';
 
+    // Summary fields
     document.getElementById("summary-fields").innerHTML = `
       <div class="sf">
         <div class="sf-label">País</div>
@@ -794,8 +693,8 @@
         <div class="sf-value ${lineTypeColor(data.type)}">${translateType(data.type)}</div>
       </div>
       <div class="sf">
-        <div class="sf-label">Operadora atual</div>
-        <div class="sf-value accent">${data.carrier || "—"}${abrTag}</div>
+        <div class="sf-label">Operadora</div>
+        <div class="sf-value accent">${data.carrier || "—"}${srcTag}</div>
       </div>
       <div class="sf">
         <div class="sf-label">Número digitado</div>
@@ -803,13 +702,14 @@
       </div>
     `;
 
+    // Formats
     document.getElementById("fmt-row").innerHTML = `
       <div class="fmt-item">
         <div class="fmt-tag">Como digitado</div>
         <div class="fmt-number original">${rawPhone}</div>
       </div>
       <div class="fmt-item">
-        <div class="fmt-tag">Formato internacional (correto)</div>
+        <div class="fmt-tag">Formato internacional (E.164)</div>
         <div class="fmt-number intl">${data.format?.international || "—"}</div>
       </div>
       <div class="fmt-item">
@@ -818,17 +718,20 @@
       </div>
     `;
 
+    // Line KV
+    const carrierLabel = data._meta?.carrierSource?.includes("Numverify") ? "Operadora (Numverify)" : "Operadora";
     document.getElementById("kv-line").innerHTML =
-      kvRow("Válido",            data.valid ? "SIM" : "NÃO", data.valid ? "green" : "red")
-    + kvRow("Tipo",              translateType(data.type), lineTypeColor(data.type))
-    + kvRow("Operadora (Abstract)", data.carrier || "—", "blue")
-    + kvRow("Operadora (ABR)",   data.portability?.currentCarrier?.name || "N/A", data.portability?.currentCarrier ? "green" : "")
-    + kvRow("País (código)",     data.country?.code || "—", "")
-    + kvRow("País (prefixo)",    data.country?.prefix ? `+${data.country.prefix}` : "—", "");
+      kvRow("Válido",          data.valid ? "SIM" : "NÃO", data.valid ? "green" : "red")
+    + kvRow("Tipo",            translateType(data.type), lineTypeColor(data.type))
+    + kvRow(carrierLabel,      data.carrier || "Desconhecida", data.carrier && data.carrier !== "Desconhecida" ? "yellow" : "")
+    + kvRow("País (código)",   data.country?.code   || "—", "")
+    + kvRow("DDI",             data.country?.prefix ? `+${data.country.prefix}` : "—", "blue")
+    + kvRow("E.164",           data.format?.e164    || "—", "");
 
-    renderPortability(data.portability);
+    // Dialing guide
     renderDialingGuide(data.dialingGuide);
 
+    // Hints
     document.getElementById("hints").innerHTML = (data.troubleshooting || []).map(h => `
       <div class="hint ${h.severity}">
         <div class="hint-icon">${hintIcons[h.severity] || "•"}</div>
@@ -840,63 +743,9 @@
       </div>
     `).join("");
 
+    // Raw JSON
     document.getElementById("raw-json").textContent = JSON.stringify(data, null, 2);
     document.getElementById("results").style.display = "block";
-  }
-
-  // ── PORTABILITY ─────────────────────────────────────────
-
-  function renderPortability(port) {
-    const panel   = document.getElementById("portability-panel");
-    const content = document.getElementById("portability-content");
-    if (!port) { panel.style.display = "none"; return; }
-    panel.style.display = "block";
-
-    if (port.error) {
-      content.innerHTML = `<div class="port-error">⚠ Não foi possível consultar ABR Telecom: ${port.error}</div>`;
-      return;
-    }
-
-    const current = port.currentCarrier;
-    const history = port.portabilityHistory || [];
-    let html = "";
-
-    if (current) {
-      html += `
-        <div class="carrier-current">
-          <div class="carrier-icon">📡</div>
-          <div class="carrier-info">
-            <div class="carrier-label">Operadora atual (portabilidade)</div>
-            <div class="carrier-name">${current.name}</div>
-            ${current.sigla ? `<div class="carrier-sigla">${current.sigla}${current.cnpj ? ' · CNPJ: ' + current.cnpj : ''}</div>` : ''}
-          </div>
-        </div>`;
-    }
-
-    html += `<div class="port-history-title">Histórico de portabilidade (${history.length} evento${history.length !== 1 ? 's' : ''})</div>`;
-
-    if (history.length === 0) {
-      html += `<div class="port-empty">Nenhuma portabilidade registrada — número permanece na operadora original.</div>`;
-    } else {
-      html += `<div class="port-timeline">`;
-      history.forEach((ev, i) => {
-        html += `
-          <div class="port-event" style="animation-delay:${i * 0.08}s">
-            <div class="port-dot">${i + 1}</div>
-            <div class="port-content">
-              <div class="port-date">📅 ${formatDate(ev.date)}</div>
-              <div class="port-carriers">
-                <span style="color:var(--text-dim)">${ev.from?.name || "—"}</span>
-                <span class="port-arrow">→</span>
-                <span style="color:var(--accent2)">${ev.to?.name || "—"}</span>
-              </div>
-            </div>
-          </div>`;
-      });
-      html += `</div>`;
-    }
-
-    content.innerHTML = html;
   }
 
   // ── DIALING GUIDE ────────────────────────────────────────
@@ -912,7 +761,7 @@
         <div class="dialing-flag">${countryFlag(guide.destinationDDI)}</div>
         <div class="dialing-meta">
           <div class="dialing-country">${guide.destinationCountry}</div>
-          <div class="dialing-ddi">DDI: +${guide.destinationDDI} · Número destino: ${guide.destinationNumber}</div>
+          <div class="dialing-ddi">DDI: +${guide.destinationDDI} · Destino: ${guide.destinationNumber}</div>
         </div>
       </div>
       <div class="dialing-note">ℹ ${guide.note}</div>
@@ -962,15 +811,6 @@
     return { mobile:"green", landline:"blue", voip:"yellow", unknown:"red" }[t] || "";
   }
 
-  function formatDate(str) {
-    if (!str || str === "—") return "—";
-    try {
-      const d = new Date(str);
-      if (isNaN(d)) return str;
-      return d.toLocaleDateString("pt-BR", { day:"2-digit", month:"2-digit", year:"numeric" });
-    } catch { return str; }
-  }
-
   function countryFlag(ddi) {
     const map = {
       "1":"🇺🇸","7":"🇷🇺","20":"🇪🇬","27":"🇿🇦","30":"🇬🇷","31":"🇳🇱","32":"🇧🇪",
@@ -993,8 +833,8 @@
   }
 
   function toggleRaw() {
-    const el  = document.getElementById("raw-json");
-    const btn = document.querySelector(".raw-toggle");
+    const el   = document.getElementById("raw-json");
+    const btn  = document.querySelector(".raw-toggle");
     const open = el.style.display === "block";
     el.style.display = open ? "none" : "block";
     btn.textContent  = (open ? "▶" : "▼") + " Ver resposta bruta da API";
@@ -1012,8 +852,8 @@
   }
 
   function setLoading(on, msg) {
-    document.getElementById("loader").style.display    = on ? "flex" : "none";
-    document.getElementById("btn-search").disabled     = on;
+    document.getElementById("loader").style.display = on ? "flex" : "none";
+    document.getElementById("btn-search").disabled  = on;
     if (msg) document.getElementById("loader-text").textContent = msg;
   }
 
