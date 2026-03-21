@@ -9,105 +9,120 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({ origin: "*", methods: ["GET", "POST"], allowedHeaders: ["Content-Type"] }));
 app.use(express.json());
 
-// Health check
 app.get("/", (req, res) => {
-  res.json({ status: "LibphoneX API Gateway running 🚀" });
+  res.json({ status: "LibphoneX API Gateway running 🚀", author: "Maicon Cubero" });
 });
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/**
- * Normaliza um número brasileiro para consulta na ABR Telecom:
- * Remove tudo que não é dígito e garante 10 ou 11 dígitos (sem DDI).
- */
 function normalizeBRNumber(phone) {
-  // Remove tudo que não for dígito
   let digits = phone.replace(/\D/g, "");
-
-  // Remove DDI 55 se presente
-  if (digits.startsWith("55") && digits.length > 11) {
-    digits = digits.slice(2);
-  }
-
+  if (digits.startsWith("55") && digits.length > 11) digits = digits.slice(2);
   return digits; // Ex: "11912345678"
 }
 
-/**
- * Detecta se o número de entrada é brasileiro (DDI 55 explícito ou 10-11 dígitos sem DDI).
- */
 function isBrazilianNumber(phone, abstractData) {
   if (abstractData?.country?.code === "BR") return true;
   const digits = phone.replace(/\D/g, "");
-  if (digits.startsWith("55")) return true;
-  if (digits.length === 10 || digits.length === 11) return true;
+  if (digits.startsWith("55") && digits.length > 11) return true;
+  if (!phone.startsWith("+") && (digits.length === 10 || digits.length === 11)) return true;
   return false;
 }
 
 /**
- * Consulta o histórico de portabilidade na ABR Telecom.
- * Endpoint oficial: POST https://consultanumero.abrtelecom.com.br/consultanumero/consulta/consultaHistoricoRecenteCtg
- * Body: application/x-www-form-urlencoded  →  numero=XXXXXXXXXXX
+ * Consulta portabilidade ABR Telecom com estratégia de dois endpoints:
+ *
+ * 1. POST /consultaHistoricoRecenteCtg  → histórico completo
+ *    body: application/x-www-form-urlencoded  →  numero=XXXXXXXXXXX
+ *
+ * 2. GET /consultaCtg?numero=XXXXXXXXXXX  → situação atual (fallback)
+ *
+ * O site às vezes retorna HTML quando não há sessão válida (CAPTCHA).
+ * Nesse caso logamos o aviso e lançamos erro descritivo.
  */
 async function fetchPortability(brNumber) {
-  const url =
-    "https://consultanumero.abrtelecom.com.br/consultanumero/consulta/consultaHistoricoRecenteCtg";
+  const BASE = "https://consultanumero.abrtelecom.com.br/consultanumero/consulta";
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Accept: "application/json",
-      // Simula browser para evitar bloqueio por User-Agent
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
-      Origin: "https://consultanumero.abrtelecom.com.br",
-      Referer: "https://consultanumero.abrtelecom.com.br/",
-    },
-    body: `numero=${encodeURIComponent(brNumber)}`,
-    timeout: 8000,
-  });
+  const commonHeaders = {
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    Accept: "application/json, text/plain, */*",
+    "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+    Origin: "https://consultanumero.abrtelecom.com.br",
+    Referer: "https://consultanumero.abrtelecom.com.br/",
+  };
 
-  if (!response.ok) {
-    throw new Error(`ABR Telecom retornou status ${response.status}`);
+  // ── Endpoint 1: POST histórico ──────────────────────────────────────────────
+  let histStatus = null;
+  try {
+    const histRes = await fetch(`${BASE}/consultaHistoricoRecenteCtg`, {
+      method: "POST",
+      headers: {
+        ...commonHeaders,
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      body: `numero=${encodeURIComponent(brNumber)}`,
+    });
+    histStatus = histRes.status;
+
+    if (histRes.ok) {
+      const text = await histRes.text();
+      const trimmed = text.trim();
+      if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+        return JSON.parse(trimmed);
+      }
+      // HTML retornado = CAPTCHA ou manutenção
+      console.warn("[ABR] Endpoint histórico retornou HTML (provável CAPTCHA/manutenção)");
+    }
+  } catch (e) {
+    console.warn("[ABR] Erro no endpoint histórico:", e.message);
   }
 
-  const data = await response.json();
-  return data;
+  // ── Endpoint 2: GET situação atual ─────────────────────────────────────────
+  let ctgStatus = null;
+  try {
+    const ctgRes = await fetch(
+      `${BASE}/consultaCtg?numero=${encodeURIComponent(brNumber)}`,
+      { method: "GET", headers: commonHeaders }
+    );
+    ctgStatus = ctgRes.status;
+
+    if (ctgRes.ok) {
+      const text = await ctgRes.text();
+      const trimmed = text.trim();
+      if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+        const parsed = JSON.parse(trimmed);
+        // Normaliza para o formato esperado pelo parser
+        return Array.isArray(parsed)
+          ? { prestadoraAtual: parsed[0] || null, historicoPortabilidade: [] }
+          : parsed;
+      }
+    }
+  } catch (e) {
+    console.warn("[ABR] Erro no endpoint situação atual:", e.message);
+  }
+
+  throw new Error(
+    `ABR Telecom indisponível (hist:${histStatus ?? "err"} / ctg:${ctgStatus ?? "err"}). ` +
+      "O serviço pode estar em manutenção ou exigindo CAPTCHA."
+  );
 }
 
-/**
- * Formata a resposta bruta da ABR Telecom num objeto amigável.
- * A API retorna algo como:
- * {
- *   numeroConsultado: "11912345678",
- *   prestadoraAtual: { nome: "Claro", cnpj: "...", sigla: "CLA" },
- *   historicoPortabilidade: [
- *     { dataPortabilidade: "2023-05-10", prestadoraOrigem: {...}, prestadoraDestino: {...} },
- *     ...
- *   ]
- * }
- */
 function parsePortabilityResponse(raw) {
   if (!raw) return null;
 
-  // Campos podem variar ligeiramente — tentamos as variações conhecidas
   const current =
-    raw.prestadoraAtual ||
-    raw.operadoraAtual ||
-    raw.prestadora ||
-    null;
+    raw.prestadoraAtual || raw.operadoraAtual || raw.prestadora || null;
 
   const history =
-    raw.historicoPortabilidade ||
-    raw.historico ||
-    raw.portabilidades ||
-    [];
+    raw.historicoPortabilidade || raw.historico || raw.portabilidades || [];
 
   return {
     currentCarrier: current
       ? {
-          name: current.nome || current.nomeFantasia || current.sigla || "—",
-          cnpj: current.cnpj || null,
+          name:  current.nome || current.nomeFantasia || current.sigla || "—",
+          cnpj:  current.cnpj  || null,
           sigla: current.sigla || null,
         }
       : null,
@@ -115,20 +130,12 @@ function parsePortabilityResponse(raw) {
       ? history.map((h) => ({
           date: h.dataPortabilidade || h.data || h.dtPortabilidade || "—",
           from: {
-            name:
-              (h.prestadoraOrigem || h.operadoraOrigem || {}).nome ||
-              (h.prestadoraOrigem || h.operadoraOrigem || {}).sigla ||
-              "—",
-            sigla:
-              (h.prestadoraOrigem || h.operadoraOrigem || {}).sigla || null,
+            name:  (h.prestadoraOrigem  || h.operadoraOrigem  || {}).nome  || (h.prestadoraOrigem  || h.operadoraOrigem  || {}).sigla || "—",
+            sigla: (h.prestadoraOrigem  || h.operadoraOrigem  || {}).sigla || null,
           },
           to: {
-            name:
-              (h.prestadoraDestino || h.operadoraDestino || {}).nome ||
-              (h.prestadoraDestino || h.operadoraDestino || {}).sigla ||
-              "—",
-            sigla:
-              (h.prestadoraDestino || h.operadoraDestino || {}).sigla || null,
+            name:  (h.prestadoraDestino || h.operadoraDestino || {}).nome  || (h.prestadoraDestino || h.operadoraDestino || {}).sigla || "—",
+            sigla: (h.prestadoraDestino || h.operadoraDestino || {}).sigla || null,
           },
         }))
       : [],
@@ -136,26 +143,17 @@ function parsePortabilityResponse(raw) {
   };
 }
 
-/**
- * Gera dicas de discagem internacional para usuário brasileiro.
- * Regras:
- *  - DDR de saída BR: 0 + operadora (14=Embratel, 15=Vivo, 21=Claro, 23=TIM, etc.)
- *  - Formato: 0 + XX + DDI + Número
- *  Retorna as principais opções de discagem.
- */
+// ─── Dialing guide ────────────────────────────────────────────────────────────
+
 function buildDialingGuide(abstractData, rawPhone) {
-  if (!abstractData?.country?.code || abstractData.country.code === "BR") {
-    return null;
-  }
+  if (!abstractData?.country?.code || abstractData.country.code === "BR") return null;
 
   const ddi = abstractData.country.prefix || abstractData.country.calling_code || null;
   if (!ddi) return null;
 
-  // Normaliza o número destino (sem DDI, sem +)
   let digits = rawPhone.replace(/\D/g, "");
   const ddiStr = String(ddi);
   if (digits.startsWith(ddiStr)) digits = digits.slice(ddiStr.length);
-  if (digits.startsWith("55")) digits = digits.slice(2); // remove BR por acidente
 
   const intlFormat = abstractData.format?.international || `+${ddi}${digits}`;
 
@@ -168,19 +166,17 @@ function buildDialingGuide(abstractData, rawPhone) {
   ];
 
   return {
-    destinationCountry: abstractData.country.name,
-    destinationDDI: ddiStr,
-    destinationNumber: digits,
+    destinationCountry:  abstractData.country.name,
+    destinationDDI:      ddiStr,
+    destinationNumber:   digits,
     internationalFormat: intlFormat,
-    // Discagem direta internacional do Brasil
     dialingOptions: carriers.map((c) => ({
-      carrier: c.sigla,
+      carrier:     c.sigla,
       carrierCode: c.code,
-      dialString: `0${c.code}+${ddiStr}${digits}`,
+      dialString:  `0${c.code}+${ddiStr}${digits}`,
       description: `Discar via ${c.sigla} (operadora ${c.code})`,
     })),
-    note:
-      "No Brasil, a discagem internacional usa o prefixo 00 ou 0 + código da operadora de longa distância + DDI + número. Alguns planos corporativos podem ter CSP fixo configurado na central.",
+    note: "No Brasil, a discagem internacional usa o prefixo 0 + código da operadora de longa distância + DDI + número. Planos corporativos podem ter CSP fixo — consulte o administrador.",
   };
 }
 
@@ -191,93 +187,77 @@ function generateTroubleshootingHints(data, rawInput, portability) {
 
   if (!data.valid) {
     hints.push({
-      severity: "error",
-      code: "INVALID_NUMBER",
-      message: "Número inválido segundo a base da operadora.",
-      suggestion:
-        "Verifique se o DDI está correto e se o número possui a quantidade certa de dígitos.",
+      severity:   "error",
+      code:       "INVALID_NUMBER",
+      message:    "Número inválido segundo a base da operadora.",
+      suggestion: "Verifique o DDI e a quantidade de dígitos. Celulares BR têm 11 dígitos (com 9), fixos têm 10.",
     });
   }
 
   if (!rawInput.startsWith("+")) {
     hints.push({
-      severity: "warning",
-      code: "MISSING_PLUS_PREFIX",
-      message: "O número não começa com '+'.",
-      suggestion:
-        "Números internacionais devem iniciar com '+' seguido do DDI (ex: +55 para Brasil).",
+      severity:   "warning",
+      code:       "MISSING_PLUS_PREFIX",
+      message:    "O número não começa com '+'.",
+      suggestion: "Números internacionais devem iniciar com '+' seguido do DDI (ex: +55 para Brasil).",
     });
   }
 
   if (data.type === "unknown") {
     hints.push({
-      severity: "warning",
-      code: "UNKNOWN_LINE_TYPE",
-      message: "Tipo de linha desconhecido.",
-      suggestion:
-        "Pode ser um número VoIP não registrado ou inativo. Confirme com o cliente se o número existe.",
+      severity:   "warning",
+      code:       "UNKNOWN_LINE_TYPE",
+      message:    "Tipo de linha desconhecido.",
+      suggestion: "Pode ser VoIP não registrado ou número inativo. Confirme com o cliente.",
     });
   }
 
   if (data.type === "landline") {
     hints.push({
-      severity: "info",
-      code: "LANDLINE_DETECTED",
-      message: "Número de telefone fixo detectado.",
-      suggestion:
-        "Certifique-se de que a rota de discagem suporta PSTN. Rotas VoIP puras podem falhar para fixos em alguns países.",
+      severity:   "info",
+      code:       "LANDLINE_DETECTED",
+      message:    "Telefone fixo detectado.",
+      suggestion: "Rotas VoIP puras podem falhar para fixos em alguns países. Verifique suporte PSTN.",
     });
   }
 
-  if (
-    data.format?.international &&
-    data.format.international !== rawInput.replace(/\s/g, "")
-  ) {
+  if (data.format?.international && data.format.international !== rawInput.replace(/\s/g, "")) {
     hints.push({
-      severity: "info",
-      code: "FORMAT_MISMATCH",
-      message: "Formato digitado difere do padrão internacional.",
+      severity:   "info",
+      code:       "FORMAT_MISMATCH",
+      message:    "Formato digitado difere do padrão E.164.",
       suggestion: `Use o formato: ${data.format.international}`,
     });
   }
 
-  if (data.country?.code) {
-    const restricted = ["CN", "RU", "IR", "CU", "KP"];
-    if (restricted.includes(data.country.code)) {
-      hints.push({
-        severity: "warning",
-        code: "RESTRICTED_COUNTRY",
-        message: `País ${data.country.name} pode ter restrições de roteamento internacional.`,
-        suggestion:
-          "Verifique se a rota de saída possui acordo de interconexão com operadoras locais.",
-      });
-    }
+  const restricted = ["CN", "RU", "IR", "CU", "KP"];
+  if (data.country?.code && restricted.includes(data.country.code)) {
+    hints.push({
+      severity:   "warning",
+      code:       "RESTRICTED_COUNTRY",
+      message:    `País ${data.country.name} pode ter restrições de roteamento internacional.`,
+      suggestion: "Verifique se a rota de saída possui acordo de interconexão com operadoras locais.",
+    });
   }
 
-  // Portabilidade hints
-  if (portability) {
-    const histLen = portability.portabilityHistory?.length || 0;
-    if (histLen > 0) {
-      hints.push({
-        severity: "info",
-        code: "PORTABILITY_DETECTED",
-        message: `Número portado ${histLen}x. Operadora atual: ${portability.currentCarrier?.name || "—"}.`,
-        suggestion:
-          "Verifique se as rotas estão atualizadas para a operadora atual. Portabilidade recente pode causar falhas temporárias de entrega.",
-      });
-    }
-    const lastPort = portability.portabilityHistory?.[0];
-    if (lastPort) {
-      const daysDiff = Math.round(
-        (Date.now() - new Date(lastPort.date).getTime()) / 86400000
-      );
-      if (!isNaN(daysDiff) && daysDiff < 30) {
+  if (portability?.portabilityHistory?.length > 0) {
+    const histLen = portability.portabilityHistory.length;
+    hints.push({
+      severity:   "info",
+      code:       "PORTABILITY_DETECTED",
+      message:    `Número portado ${histLen}x. Operadora atual: ${portability.currentCarrier?.name || "—"}.`,
+      suggestion: "Verifique se as rotas estão atualizadas para a operadora vigente.",
+    });
+
+    const lastPort = portability.portabilityHistory[0];
+    if (lastPort?.date && lastPort.date !== "—") {
+      const daysDiff = Math.round((Date.now() - new Date(lastPort.date).getTime()) / 86400000);
+      if (!isNaN(daysDiff) && daysDiff >= 0 && daysDiff < 30) {
         hints.push({
-          severity: "warning",
-          code: "RECENT_PORTABILITY",
-          message: `Portabilidade realizada há ${daysDiff} dia(s) — muito recente.`,
-          suggestion:
-            "Bases de roteamento podem não estar totalmente propagadas. Se houver falha, aguarde 24-48h ou acione o NOC.",
+          severity:   "warning",
+          code:       "RECENT_PORTABILITY",
+          message:    `Portabilidade realizada há ${daysDiff} dia(s) — muito recente.`,
+          suggestion: "Bases de roteamento podem não estar totalmente propagadas. Aguarde 24-48h ou acione o NOC.",
         });
       }
     }
@@ -285,11 +265,10 @@ function generateTroubleshootingHints(data, rawInput, portability) {
 
   if (hints.length === 0 || hints.every((h) => h.severity === "info")) {
     hints.push({
-      severity: "success",
-      code: "ALL_CLEAR",
-      message: "Número aparentemente válido e sem anomalias detectadas.",
-      suggestion:
-        "Se ainda assim houver falha de discagem, verifique o CDR na plataforma de telefonia.",
+      severity:   "success",
+      code:       "ALL_CLEAR",
+      message:    "Número aparentemente válido e sem anomalias detectadas.",
+      suggestion: "Se ainda assim houver falha de discagem, verifique o CDR na plataforma de telefonia.",
     });
   }
 
@@ -300,72 +279,64 @@ function generateTroubleshootingHints(data, rawInput, portability) {
 
 app.get("/api/validate", async (req, res) => {
   const { phone } = req.query;
-
-  if (!phone) {
-    return res.status(400).json({ error: "Parâmetro 'phone' é obrigatório." });
-  }
+  if (!phone) return res.status(400).json({ error: "Parâmetro 'phone' é obrigatório." });
 
   const API_KEY = process.env.ABSTRACT_API_KEY;
-  if (!API_KEY) {
-    return res.status(500).json({ error: "API Key não configurada no servidor." });
-  }
+  if (!API_KEY) return res.status(500).json({ error: "API Key não configurada no servidor." });
 
   try {
     // 1️⃣ Abstract API
-    const abstractUrl = `https://phoneintelligence.abstractapi.com/v1/?api_key=${API_KEY}&phone=${encodeURIComponent(phone)}`;
-    const abstractRes = await fetch(abstractUrl);
+    const abstractRes = await fetch(
+      `https://phoneintelligence.abstractapi.com/v1/?api_key=${API_KEY}&phone=${encodeURIComponent(phone)}`
+    );
 
     if (!abstractRes.ok) {
-      const errorText = await abstractRes.text();
-      return res
-        .status(abstractRes.status)
-        .json({ error: `Erro na AbstractAPI: ${errorText}` });
+      const txt = await abstractRes.text();
+      return res.status(abstractRes.status).json({ error: `Erro na AbstractAPI: ${txt}` });
     }
 
     const abstractData = await abstractRes.json();
 
-    // 2️⃣ ABR Telecom portability (only for BR numbers)
-    let portability = null;
+    // 2️⃣ ABR Telecom portability (apenas BR)
+    let portability      = null;
     let portabilityError = null;
 
     if (isBrazilianNumber(phone, abstractData)) {
       try {
         const brNumber = normalizeBRNumber(phone);
+        console.log(`[ABR] Consultando: ${brNumber}`);
         const rawPort = await fetchPortability(brNumber);
-        portability = parsePortabilityResponse(rawPort);
+        portability   = parsePortabilityResponse(rawPort);
+        console.log(`[ABR] Operadora: ${portability?.currentCarrier?.name || "N/A"}`);
       } catch (err) {
-        console.error("Portability lookup failed:", err.message);
+        console.error("[ABR] Erro:", err.message);
         portabilityError = err.message;
       }
     }
 
-    // 3️⃣ International dialing guide (for BR users calling abroad)
+    // 3️⃣ Guia de discagem (destinos não-BR)
     const dialingGuide = buildDialingGuide(abstractData, phone);
 
-    // 4️⃣ Troubleshooting hints
+    // 4️⃣ Hints
     const troubleshooting = generateTroubleshootingHints(abstractData, phone, portability);
 
-    // 5️⃣ Merge carrier: prefer ABR Telecom if available
+    // 5️⃣ Merge operadora: ABR > Abstract
     const carrier =
-      portability?.currentCarrier?.name ||
-      abstractData.carrier ||
-      "Desconhecida";
+      portability?.currentCarrier?.name || abstractData.carrier || "Desconhecida";
 
     return res.json({
       ...abstractData,
       carrier,
       portability: portability
-        ? {
-            currentCarrier: portability.currentCarrier,
-            portabilityHistory: portability.portabilityHistory,
-            source: "ABR Telecom",
-          }
+        ? { currentCarrier: portability.currentCarrier, portabilityHistory: portability.portabilityHistory, source: "ABR Telecom" }
         : portabilityError
         ? { error: portabilityError, source: "ABR Telecom" }
         : null,
       dialingGuide,
       troubleshooting,
+      _meta: { author: "Maicon Cubero", version: "2.1" },
     });
+
   } catch (err) {
     console.error("Erro no /api/validate:", err);
     return res.status(500).json({ error: "Falha ao consultar a API externa." });
@@ -373,5 +344,5 @@ app.get("/api/validate", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`LibphoneX backend rodando na porta ${PORT}`);
+  console.log(`LibphoneX v2.1 · porta ${PORT} · by Maicon Cubero`);
 });
