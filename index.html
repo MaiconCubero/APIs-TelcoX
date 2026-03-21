@@ -117,11 +117,11 @@
       animation: pulse 2s infinite;
     }
 
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    @keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes spin     { to{transform:rotate(360deg)} }
+    @keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    @keyframes slideIn  { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
 
     /* ── SEARCH ── */
     .search-section {
@@ -226,7 +226,6 @@
     /* ── RESULTS ── */
     #results { display: none; animation: fadeUp 0.4s ease both; }
 
-    /* Summary strip */
     .summary-strip {
       display: flex;
       align-items: stretch;
@@ -279,7 +278,6 @@
     .sf-value.warn    { color: var(--warn); }
     .sf-value.danger  { color: var(--danger); }
 
-    /* Panels */
     .panels {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -318,8 +316,8 @@
       letter-spacing: 1px;
     }
 
-    .panel-badge.abr  { background: rgba(0,255,157,0.15); color: var(--accent2); border: 1px solid rgba(0,255,157,0.3); }
-    .panel-badge.br   { background: rgba(255,184,0,0.12); color: var(--warn); border: 1px solid rgba(255,184,0,0.3); }
+    .panel-badge.abr { background: rgba(0,255,157,0.15); color: var(--accent2); border: 1px solid rgba(0,255,157,0.3); }
+    .panel-badge.br  { background: rgba(255,184,0,0.12); color: var(--warn);    border: 1px solid rgba(255,184,0,0.3); }
 
     .kv { display: flex; flex-direction: column; gap: 10px; }
 
@@ -330,16 +328,14 @@
       gap: 12px;
     }
 
-    .kv-key { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); flex-shrink: 0; }
-    .kv-val { font-family: var(--mono); font-size: 0.82rem; color: var(--text); text-align: right; word-break: break-all; }
+    .kv-key  { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); flex-shrink: 0; }
+    .kv-val  { font-family: var(--mono); font-size: 0.82rem; color: var(--text); text-align: right; word-break: break-all; }
     .kv-val.green  { color: var(--accent2); }
     .kv-val.blue   { color: var(--accent); }
     .kv-val.yellow { color: var(--warn); }
     .kv-val.red    { color: var(--danger); }
 
-    /* Format compare */
-    .fmt-row { display: flex; flex-direction: column; gap: 10px; }
-
+    .fmt-row  { display: flex; flex-direction: column; gap: 10px; }
     .fmt-item { display: flex; flex-direction: column; gap: 4px; }
 
     .fmt-tag {
@@ -363,7 +359,7 @@
     .fmt-number.intl     { color: var(--accent2); border-color: rgba(0,255,157,0.2); }
     .fmt-number.local    { color: var(--accent);  border-color: rgba(0,212,255,0.2); }
 
-    /* ── PORTABILITY PANEL ── */
+    /* ── PORTABILITY ── */
     #portability-panel { margin-bottom: 24px; }
 
     .carrier-current {
@@ -378,7 +374,6 @@
     }
 
     .carrier-icon { font-size: 1.4rem; }
-
     .carrier-info { display: flex; flex-direction: column; gap: 2px; }
 
     .carrier-label {
@@ -397,11 +392,7 @@
       letter-spacing: 1px;
     }
 
-    .carrier-sigla {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--text-dim);
-    }
+    .carrier-sigla { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); }
 
     .port-history-title {
       font-family: var(--mono);
@@ -417,9 +408,7 @@
     .port-timeline::before {
       content: '';
       position: absolute;
-      left: 11px;
-      top: 0;
-      bottom: 0;
+      left: 11px; top: 0; bottom: 0;
       width: 1px;
       background: var(--border);
     }
@@ -433,8 +422,7 @@
     }
 
     .port-dot {
-      width: 23px;
-      height: 23px;
+      width: 23px; height: 23px;
       border-radius: 50%;
       background: var(--panel);
       border: 2px solid var(--accent);
@@ -449,27 +437,10 @@
     }
 
     .port-content { display: flex; flex-direction: column; gap: 3px; }
-
-    .port-date {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--text-dim);
-    }
-
-    .port-carriers {
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      color: var(--text);
-    }
-
-    .port-arrow { color: var(--accent); margin: 0 6px; }
-
-    .port-empty {
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      padding: 10px 0;
-    }
+    .port-date    { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); }
+    .port-carriers { font-family: var(--mono); font-size: 0.82rem; color: var(--text); }
+    .port-arrow   { color: var(--accent); margin: 0 6px; }
+    .port-empty   { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); padding: 10px 0; }
 
     .port-error {
       font-family: var(--mono);
@@ -481,7 +452,7 @@
       padding: 10px 14px;
     }
 
-    /* ── DIALING GUIDE PANEL ── */
+    /* ── DIALING GUIDE ── */
     #dialing-panel { margin-bottom: 24px; }
 
     .dialing-header {
@@ -494,21 +465,9 @@
     }
 
     .dialing-flag { font-size: 1.6rem; }
-
     .dialing-meta { display: flex; flex-direction: column; gap: 2px; }
-
-    .dialing-country {
-      font-family: var(--cond);
-      font-size: 1rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .dialing-ddi {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--accent);
-    }
+    .dialing-country { font-family: var(--cond); font-size: 1rem; font-weight: 700; color: #fff; }
+    .dialing-ddi     { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); }
 
     .dialing-note {
       font-family: var(--mono);
@@ -544,33 +503,11 @@
 
     .dialing-option:hover .dial-copy { opacity: 1; }
 
-    .dial-left { display: flex; flex-direction: column; gap: 3px; }
-
-    .dial-carrier {
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .dial-string {
-      font-family: var(--mono);
-      font-size: 1.05rem;
-      color: var(--accent2);
-      letter-spacing: 1px;
-    }
-
-    .dial-copy {
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      color: var(--accent);
-      opacity: 0;
-      transition: opacity 0.2s;
-      letter-spacing: 1px;
-    }
-
-    .dial-copied { color: var(--accent2) !important; opacity: 1 !important; }
+    .dial-left   { display: flex; flex-direction: column; gap: 3px; }
+    .dial-carrier { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
+    .dial-string  { font-family: var(--mono); font-size: 1.05rem; color: var(--accent2); letter-spacing: 1px; }
+    .dial-copy    { font-family: var(--mono); font-size: 0.6rem; color: var(--accent); opacity: 0; transition: opacity 0.2s; letter-spacing: 1px; }
+    .dial-copied  { color: var(--accent2) !important; opacity: 1 !important; }
 
     /* ── TROUBLESHOOTING ── */
     .hints { display: flex; flex-direction: column; gap: 12px; }
@@ -590,22 +527,12 @@
     .hint.success { border-color: var(--accent2); background: rgba(0,255,157,0.04); }
 
     .hint-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
-
     .hint-body { display: flex; flex-direction: column; gap: 4px; }
+    .hint-code { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+    .hint-msg  { font-size: 0.85rem; font-weight: 600; color: var(--text); line-height: 1.4; }
+    .hint-sug  { font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; margin-top: 2px; }
 
-    .hint-code {
-      font-family: var(--mono);
-      font-size: 0.58rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
-
-    .hint-msg { font-size: 0.85rem; font-weight: 600; color: var(--text); line-height: 1.4; }
-
-    .hint-sug { font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; margin-top: 2px; }
-
-    /* Raw JSON */
+    /* ── RAW JSON ── */
     .raw-toggle {
       display: flex;
       align-items: center;
@@ -640,7 +567,7 @@
       white-space: pre;
     }
 
-    /* Error */
+    /* ── ERROR ── */
     #error-box {
       display: none;
       background: rgba(255,59,92,0.06);
@@ -653,12 +580,12 @@
       animation: fadeUp 0.3s ease both;
     }
 
-    /* Footer */
+    /* ── FOOTER ── */
     footer {
       position: fixed;
       bottom: 0; left: 0; right: 0;
       border-top: 1px solid var(--border);
-      background: rgba(8,12,16,0.9);
+      background: rgba(8,12,16,0.92);
       backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
@@ -671,7 +598,27 @@
       z-index: 10;
     }
 
-    /* Divider */
+    .footer-author {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent2);
+      font-size: 0.62rem;
+      letter-spacing: 1px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-author:hover { color: #fff; }
+
+    .footer-author-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent2);
+      box-shadow: 0 0 6px var(--accent2);
+    }
+
+    /* ── SECTION DIVIDER ── */
     .section-divider {
       display: flex;
       align-items: center;
@@ -680,7 +627,6 @@
     }
 
     .section-divider .section-label { margin-bottom: 0; }
-
     .section-divider-line { flex: 1; height: 1px; background: var(--border); }
   </style>
 </head>
@@ -715,20 +661,19 @@
         Analisar
       </button>
     </div>
-    <div class="search-hint">» Digite o número com DDI (ex: +55 para Brasil, +1 para EUA). Números BR: consulta portabilidade automática via ABR Telecom.</div>
+    <div class="search-hint">» Digite com DDI (ex: +55 para Brasil). Números BR: consulta portabilidade via ABR Telecom.</div>
   </section>
 
   <div id="loader">
     <div class="loader-ring"></div>
-    <div class="loader-text" id="loader-text">CONSULTANDO ABSTRACT API...</div>
+    <div class="loader-text" id="loader-text">CONSULTANDO...</div>
   </div>
 
   <div id="error-box"></div>
 
   <div id="results">
 
-    <!-- Summary strip -->
-    <div class="summary-strip" id="summary-strip">
+    <div class="summary-strip">
       <div class="validity-badge" id="validity-badge">
         <div class="badge-icon" id="badge-icon"></div>
         <div class="badge-label" id="badge-label"></div>
@@ -736,7 +681,6 @@
       <div class="summary-fields" id="summary-fields"></div>
     </div>
 
-    <!-- Basic panels -->
     <div class="panels">
       <div class="panel">
         <div class="panel-title">// Comparação de formatos</div>
@@ -748,7 +692,7 @@
       </div>
     </div>
 
-    <!-- ══ PORTABILITY (BR only) ══ -->
+    <!-- PORTABILITY (BR only) -->
     <div id="portability-panel" style="display:none">
       <div class="section-divider">
         <div class="section-label">// Portabilidade numérica</div>
@@ -764,7 +708,7 @@
       </div>
     </div>
 
-    <!-- ══ DIALING GUIDE (international dest) ══ -->
+    <!-- DIALING GUIDE (international dest) -->
     <div id="dialing-panel" style="display:none">
       <div class="section-divider">
         <div class="section-label">// Guia de discagem internacional</div>
@@ -785,7 +729,6 @@
       <div class="hints" id="hints"></div>
     </div>
 
-    <!-- Raw JSON -->
     <button class="raw-toggle" onclick="toggleRaw()">▶ Ver resposta bruta da API</button>
     <pre id="raw-json"></pre>
 
@@ -793,38 +736,31 @@
 </div>
 
 <footer>
-  <span>LIBPHONEX v2.0 · AbstractAPI + ABR Telecom</span>
+  <span>LIBPHONEX v2.1 · AbstractAPI + ABR Telecom</span>
   <span id="last-query">—</span>
-  <span>N1 / N2 SUPPORT TOOL</span>
+  <a class="footer-author" href="https://github.com/maiconcubero" target="_blank" rel="noopener">
+    <div class="footer-author-dot"></div>
+    Maicon Cubero
+  </a>
 </footer>
 
 <script>
-  // ── CONFIG ──────────────────────────────────────────────
   const BACKEND_URL = "https://apis-telcox.onrender.com";
-  // ────────────────────────────────────────────────────────
-
   const hintIcons = { error:"🔴", warning:"🟡", info:"🔵", success:"🟢" };
 
   async function validatePhone() {
     const input = document.getElementById("phone-input");
     const phone = input.value.trim();
-
-    if (!phone) {
-      showError("Digite um número de telefone para analisar.");
-      return;
-    }
+    if (!phone) { showError("Digite um número de telefone para analisar."); return; }
 
     setLoading(true, "CONSULTANDO ABSTRACT API...");
     hideAll();
 
     try {
-      const res = await fetch(`${BACKEND_URL}/api/validate?phone=${encodeURIComponent(phone)}`);
+      const res  = await fetch(`${BACKEND_URL}/api/validate?phone=${encodeURIComponent(phone)}`);
       const data = await res.json();
 
-      if (!res.ok) {
-        showError(data.error || "Erro desconhecido do backend.");
-        return;
-      }
+      if (!res.ok) { showError(data.error || "Erro desconhecido do backend."); return; }
 
       renderResults(data, phone);
       document.getElementById("last-query").textContent =
@@ -839,15 +775,16 @@
   // ── RENDER ──────────────────────────────────────────────
 
   function renderResults(data, rawPhone) {
-    // Validity badge
     const badge = document.getElementById("validity-badge");
     badge.className = `validity-badge ${data.valid ? "valid" : "invalid"}`;
-    document.getElementById("badge-icon").textContent = data.valid ? "✓" : "✗";
+    document.getElementById("badge-icon").textContent  = data.valid ? "✓" : "✗";
     document.getElementById("badge-label").textContent = data.valid ? "VÁLIDO" : "INVÁLIDO";
 
-    // Summary
-    const sf = document.getElementById("summary-fields");
-    sf.innerHTML = `
+    const abrTag = data.portability?.currentCarrier
+      ? ' <span style="font-size:0.55rem;color:var(--accent2);border:1px solid rgba(0,255,157,0.3);padding:1px 5px;border-radius:2px">ABR</span>'
+      : '';
+
+    document.getElementById("summary-fields").innerHTML = `
       <div class="sf">
         <div class="sf-label">País</div>
         <div class="sf-value">${data.country?.name || "—"} (${data.country?.code || "?"})</div>
@@ -858,7 +795,7 @@
       </div>
       <div class="sf">
         <div class="sf-label">Operadora atual</div>
-        <div class="sf-value accent">${data.carrier || "—"}${data.portability?.currentCarrier ? ' <span style="font-size:0.6rem;color:var(--accent2)">[ABR]</span>' : ''}</div>
+        <div class="sf-value accent">${data.carrier || "—"}${abrTag}</div>
       </div>
       <div class="sf">
         <div class="sf-label">Número digitado</div>
@@ -866,7 +803,6 @@
       </div>
     `;
 
-    // Formats
     document.getElementById("fmt-row").innerHTML = `
       <div class="fmt-item">
         <div class="fmt-tag">Como digitado</div>
@@ -882,22 +818,17 @@
       </div>
     `;
 
-    // Line KV
     document.getElementById("kv-line").innerHTML =
-      kvRow("Válido", data.valid ? "SIM" : "NÃO", data.valid ? "green" : "red")
-      + kvRow("Tipo", translateType(data.type), lineTypeColor(data.type))
-      + kvRow("Operadora (Abstract)", data.carrier || "—", "blue")
-      + kvRow("Operadora (ABR)", data.portability?.currentCarrier?.name || "N/A", data.portability?.currentCarrier ? "green" : "")
-      + kvRow("País (código)", data.country?.code || "—", "")
-      + kvRow("País (prefixo)", data.country?.prefix ? `+${data.country.prefix}` : "—", "");
+      kvRow("Válido",            data.valid ? "SIM" : "NÃO", data.valid ? "green" : "red")
+    + kvRow("Tipo",              translateType(data.type), lineTypeColor(data.type))
+    + kvRow("Operadora (Abstract)", data.carrier || "—", "blue")
+    + kvRow("Operadora (ABR)",   data.portability?.currentCarrier?.name || "N/A", data.portability?.currentCarrier ? "green" : "")
+    + kvRow("País (código)",     data.country?.code || "—", "")
+    + kvRow("País (prefixo)",    data.country?.prefix ? `+${data.country.prefix}` : "—", "");
 
-    // Portability panel
     renderPortability(data.portability);
-
-    // Dialing guide panel
     renderDialingGuide(data.dialingGuide);
 
-    // Hints
     document.getElementById("hints").innerHTML = (data.troubleshooting || []).map(h => `
       <div class="hint ${h.severity}">
         <div class="hint-icon">${hintIcons[h.severity] || "•"}</div>
@@ -909,20 +840,16 @@
       </div>
     `).join("");
 
-    // Raw JSON
     document.getElementById("raw-json").textContent = JSON.stringify(data, null, 2);
-
     document.getElementById("results").style.display = "block";
   }
 
   // ── PORTABILITY ─────────────────────────────────────────
 
   function renderPortability(port) {
-    const panel = document.getElementById("portability-panel");
+    const panel   = document.getElementById("portability-panel");
     const content = document.getElementById("portability-content");
-
     if (!port) { panel.style.display = "none"; return; }
-
     panel.style.display = "block";
 
     if (port.error) {
@@ -932,7 +859,6 @@
 
     const current = port.currentCarrier;
     const history = port.portabilityHistory || [];
-
     let html = "";
 
     if (current) {
@@ -944,8 +870,7 @@
             <div class="carrier-name">${current.name}</div>
             ${current.sigla ? `<div class="carrier-sigla">${current.sigla}${current.cnpj ? ' · CNPJ: ' + current.cnpj : ''}</div>` : ''}
           </div>
-        </div>
-      `;
+        </div>`;
     }
 
     html += `<div class="port-history-title">Histórico de portabilidade (${history.length} evento${history.length !== 1 ? 's' : ''})</div>`;
@@ -955,20 +880,18 @@
     } else {
       html += `<div class="port-timeline">`;
       history.forEach((ev, i) => {
-        const dateFormatted = formatDate(ev.date);
         html += `
           <div class="port-event" style="animation-delay:${i * 0.08}s">
             <div class="port-dot">${i + 1}</div>
             <div class="port-content">
-              <div class="port-date">📅 ${dateFormatted}</div>
+              <div class="port-date">📅 ${formatDate(ev.date)}</div>
               <div class="port-carriers">
                 <span style="color:var(--text-dim)">${ev.from?.name || "—"}</span>
                 <span class="port-arrow">→</span>
                 <span style="color:var(--accent2)">${ev.to?.name || "—"}</span>
               </div>
             </div>
-          </div>
-        `;
+          </div>`;
       });
       html += `</div>`;
     }
@@ -979,11 +902,9 @@
   // ── DIALING GUIDE ────────────────────────────────────────
 
   function renderDialingGuide(guide) {
-    const panel = document.getElementById("dialing-panel");
+    const panel   = document.getElementById("dialing-panel");
     const content = document.getElementById("dialing-content");
-
     if (!guide) { panel.style.display = "none"; return; }
-
     panel.style.display = "block";
 
     let html = `
@@ -998,7 +919,7 @@
       <div class="dialing-options">
     `;
 
-    guide.dialingOptions.forEach((opt, i) => {
+    guide.dialingOptions.forEach(opt => {
       html += `
         <div class="dialing-option" onclick="copyDial(this, '${opt.dialString}')">
           <div class="dial-left">
@@ -1006,19 +927,14 @@
             <div class="dial-string">${opt.dialString}</div>
           </div>
           <div class="dial-copy">[ COPIAR ]</div>
-        </div>
-      `;
+        </div>`;
     });
 
-    html += `</div>`;
-
-    // Also show E.164 format
-    html += `
+    html += `</div>
       <div style="margin-top:14px;padding:12px 16px;background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.15);border-radius:3px;">
         <div class="fmt-tag" style="margin-bottom:6px">Formato E.164 (VoIP / SIP / WhatsApp)</div>
         <div style="font-family:var(--mono);font-size:1rem;color:var(--accent2)">${guide.internationalFormat}</div>
-      </div>
-    `;
+      </div>`;
 
     content.innerHTML = html;
   }
@@ -1028,20 +944,14 @@
       const cp = el.querySelector(".dial-copy");
       cp.textContent = "[ COPIADO ✓ ]";
       cp.classList.add("dial-copied");
-      setTimeout(() => {
-        cp.textContent = "[ COPIAR ]";
-        cp.classList.remove("dial-copied");
-      }, 2000);
+      setTimeout(() => { cp.textContent = "[ COPIAR ]"; cp.classList.remove("dial-copied"); }, 2000);
     });
   }
 
   // ── HELPERS ──────────────────────────────────────────────
 
   function kvRow(key, val, cls) {
-    return `<div class="kv-row">
-      <span class="kv-key">${key}</span>
-      <span class="kv-val ${cls}">${val}</span>
-    </div>`;
+    return `<div class="kv-row"><span class="kv-key">${key}</span><span class="kv-val ${cls}">${val}</span></div>`;
   }
 
   function translateType(t) {
@@ -1062,7 +972,6 @@
   }
 
   function countryFlag(ddi) {
-    // Map DDI -> flag emoji (principais destinos)
     const map = {
       "1":"🇺🇸","7":"🇷🇺","20":"🇪🇬","27":"🇿🇦","30":"🇬🇷","31":"🇳🇱","32":"🇧🇪",
       "33":"🇫🇷","34":"🇪🇸","36":"🇭🇺","39":"🇮🇹","40":"🇷🇴","41":"🇨🇭",
@@ -1084,27 +993,27 @@
   }
 
   function toggleRaw() {
-    const el = document.getElementById("raw-json");
+    const el  = document.getElementById("raw-json");
     const btn = document.querySelector(".raw-toggle");
     const open = el.style.display === "block";
     el.style.display = open ? "none" : "block";
-    btn.textContent = (open ? "▶" : "▼") + " Ver resposta bruta da API";
+    btn.textContent  = (open ? "▶" : "▼") + " Ver resposta bruta da API";
   }
 
   function showError(msg) {
     const el = document.getElementById("error-box");
     el.style.display = "block";
-    el.textContent = `⚠ ERRO: ${msg}`;
+    el.textContent   = `⚠ ERRO: ${msg}`;
   }
 
   function hideAll() {
-    document.getElementById("results").style.display = "none";
+    document.getElementById("results").style.display   = "none";
     document.getElementById("error-box").style.display = "none";
   }
 
   function setLoading(on, msg) {
-    document.getElementById("loader").style.display = on ? "flex" : "none";
-    document.getElementById("btn-search").disabled = on;
+    document.getElementById("loader").style.display    = on ? "flex" : "none";
+    document.getElementById("btn-search").disabled     = on;
     if (msg) document.getElementById("loader-text").textContent = msg;
   }
 
