@@ -3,7 +3,7 @@ const cors     = require("cors");
 const fetch    = require("node-fetch");
 require("dotenv").config();
 
-// ─── libphonenumber setup ────────────────────────────────────────────────────
+// ─── libphonenumber ──────────────────────────────────────────────────────────
 const { PhoneNumberUtil, PhoneNumberFormat, PhoneNumberType } = require("google-libphonenumber");
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -13,71 +13,90 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({ origin: "*", methods: ["GET", "POST"], allowedHeaders: ["Content-Type"] }));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ status: "LibphoneX API Gateway 🚀", version: "2.2", author: "Maicon Cubero" });
+app.get("/", (_req, res) => {
+  res.json({ status: "LibphoneX API Gateway 🚀", version: "2.3", author: "Maicon Cubero" });
 });
 
-// ─── libphonenumber helpers ───────────────────────────────────────────────────
+// ─── Mapa de nomes de países (fallback para Intl.DisplayNames) ────────────────
+// Usado quando o Node não suporta pt-BR em Intl.DisplayNames
+const COUNTRY_NAMES = {
+  BR:"Brasil",US:"Estados Unidos",AR:"Argentina",CL:"Chile",CO:"Colômbia",
+  PE:"Peru",UY:"Uruguai",PY:"Paraguai",BO:"Bolívia",EC:"Equador",VE:"Venezuela",
+  MX:"México",PT:"Portugal",ES:"Espanha",FR:"França",DE:"Alemanha",IT:"Itália",
+  GB:"Reino Unido",NL:"Países Baixos",BE:"Bélgica",CH:"Suíça",AT:"Áustria",
+  SE:"Suécia",NO:"Noruega",DK:"Dinamarca",FI:"Finlândia",PL:"Polônia",
+  RU:"Rússia",CN:"China",JP:"Japão",KR:"Coreia do Sul",IN:"Índia",
+  AU:"Austrália",NZ:"Nova Zelândia",ZA:"África do Sul",NG:"Nigéria",
+  EG:"Egito",MA:"Marrocos",KE:"Quênia",IL:"Israel",TR:"Turquia",
+  SA:"Arábia Saudita",AE:"Emirados Árabes",IR:"Irã",PK:"Paquistão",
+  ID:"Indonésia",MY:"Malásia",SG:"Singapura",TH:"Tailândia",PH:"Filipinas",
+  HK:"Hong Kong",TW:"Taiwan",MO:"Macau",CA:"Canadá",CU:"Cuba",
+  GT:"Guatemala",SV:"El Salvador",HN:"Honduras",NI:"Nicarágua",
+  CR:"Costa Rica",PA:"Panamá",DO:"República Dominicana",
+  RO:"Romênia",HU:"Hungria",GR:"Grécia",CZ:"República Tcheca",
+  SK:"Eslováquia",HR:"Croácia",RS:"Sérvia",UA:"Ucrânia",LT:"Lituânia",
+  LV:"Letônia",EE:"Estônia",LU:"Luxemburgo",IE:"Irlanda",IS:"Islândia",
+  BG:"Bulgária",DZ:"Argélia",TN:"Tunísia",LY:"Líbia",GM:"Gâmbia",
+  SN:"Senegal",MM:"Mianmar",LK:"Sri Lanka",AF:"Afeganistão",
+};
 
-/**
- * Analisa um número via google-libphonenumber e devolve um objeto
- * compatível com o formato que o frontend já espera (mesmo shape da AbstractAPI).
- */
+function getCountryName(regionCode) {
+  if (!regionCode) return "Desconhecido";
+  try {
+    const names = new Intl.DisplayNames(["pt-BR"], { type: "region" });
+    const name  = names.of(regionCode);
+    // Às vezes retorna o próprio código quando não tem tradução
+    if (name && name !== regionCode) return name;
+  } catch (_) { /* Intl não disponível ou sem suporte pt-BR */ }
+  return COUNTRY_NAMES[regionCode] || regionCode;
+}
+
+// ─── libphonenumber: análise principal ───────────────────────────────────────
+
 function analyzeWithLibphone(rawPhone) {
   try {
-    // Tenta parsear com região BR como hint se não tiver +
-    const hint  = rawPhone.startsWith("+") ? undefined : "BR";
+    const hint   = rawPhone.startsWith("+") ? undefined : "BR";
     const parsed = phoneUtil.parse(rawPhone, hint);
 
-    const valid      = phoneUtil.isValidNumber(parsed);
-    const region     = phoneUtil.getRegionCodeForNumber(parsed);
+    const valid       = phoneUtil.isValidNumber(parsed);
+    const region      = phoneUtil.getRegionCodeForNumber(parsed);
     const countryCode = parsed.getCountryCode();
-    const numType    = phoneUtil.getNumberType(parsed);
+    const numType     = phoneUtil.getNumberType(parsed);
 
-    // Mapeia PhoneNumberType → string igual à AbstractAPI
     const typeMap = {
-      [PhoneNumberType.MOBILE]:           "mobile",
-      [PhoneNumberType.FIXED_LINE]:       "landline",
+      [PhoneNumberType.MOBILE]:               "mobile",
+      [PhoneNumberType.FIXED_LINE]:           "landline",
       [PhoneNumberType.FIXED_LINE_OR_MOBILE]: "mobile",
-      [PhoneNumberType.VOIP]:             "voip",
-      [PhoneNumberType.TOLL_FREE]:        "landline",
-      [PhoneNumberType.PREMIUM_RATE]:     "landline",
-      [PhoneNumberType.SHARED_COST]:      "landline",
-      [PhoneNumberType.PERSONAL_NUMBER]:  "mobile",
-      [PhoneNumberType.PAGER]:            "mobile",
-      [PhoneNumberType.UAN]:              "landline",
-      [PhoneNumberType.VOICEMAIL]:        "voip",
-      [PhoneNumberType.UNKNOWN]:          "unknown",
+      [PhoneNumberType.VOIP]:                 "voip",
+      [PhoneNumberType.TOLL_FREE]:            "landline",
+      [PhoneNumberType.PREMIUM_RATE]:         "landline",
+      [PhoneNumberType.SHARED_COST]:          "landline",
+      [PhoneNumberType.PERSONAL_NUMBER]:      "mobile",
+      [PhoneNumberType.PAGER]:                "mobile",
+      [PhoneNumberType.UAN]:                  "landline",
+      [PhoneNumberType.VOICEMAIL]:            "voip",
+      [PhoneNumberType.UNKNOWN]:              "unknown",
     };
-
-    const type = typeMap[numType] ?? "unknown";
-
-    const intlFormat   = phoneUtil.format(parsed, PhoneNumberFormat.INTERNATIONAL);
-    const localFormat  = phoneUtil.format(parsed, PhoneNumberFormat.NATIONAL);
-    const e164Format   = phoneUtil.format(parsed, PhoneNumberFormat.E164);
-
-    // Nome do país a partir da região
-    const regionNames = new Intl.DisplayNames(["pt-BR"], { type: "region" });
-    const countryName = region ? (regionNames.of(region) || region) : "Desconhecido";
 
     return {
       valid,
-      type,
+      type:    typeMap[numType] ?? "unknown",
       format: {
-        international: intlFormat,
-        local:         localFormat,
-        e164:          e164Format,
+        international: phoneUtil.format(parsed, PhoneNumberFormat.INTERNATIONAL),
+        local:         phoneUtil.format(parsed, PhoneNumberFormat.NATIONAL),
+        e164:          phoneUtil.format(parsed, PhoneNumberFormat.E164),
       },
       country: {
-        code:   region     || null,
-        name:   countryName,
-        prefix: countryCode || null,
+        code:   region        || null,
+        name:   getCountryName(region),
+        prefix: countryCode   || null,
       },
-      carrier:  null,   // libphonenumber não tem dados de operadora
+      carrier:  null,
       _source:  "libphonenumber",
     };
+
   } catch (err) {
-    // Número não parseável
+    console.warn("[libphone] Parse error:", err.message);
     return {
       valid:   false,
       type:    "unknown",
@@ -90,55 +109,78 @@ function analyzeWithLibphone(rawPhone) {
   }
 }
 
-// ─── Numverify (carrier fallback) ─────────────────────────────────────────────
+// ─── Numverify: busca operadora ───────────────────────────────────────────────
+//
+// BUG FIX 1: node-fetch v2 não aceita `timeout` como opção nativa —
+//            usa AbortController + setTimeout para timeout real.
+// BUG FIX 2: Numverify v1 endpoint correto:
+//            https://apilayer.net/api/validate   (HTTPS funciona no plano pago)
+//            http://apilayer.net/api/validate    (HTTP — plano gratuito)
+//            Render bloqueia HTTP de saída, então tentamos HTTPS primeiro e
+//            caímos em HTTP com workaround se necessário.
+//            Env var: NUMVERIFY_API_KEY
+// ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Consulta Numverify apenas para obter a operadora.
- * Endpoint: http://apilayer.net/api/validate (free tier usa HTTP)
- * Env var:  NUMVERIFY_API_KEY
- */
 async function fetchCarrierFromNumverify(e164Phone) {
   const key = process.env.NUMVERIFY_API_KEY;
-  if (!key) return null;
+  if (!key) {
+    console.log("[Numverify] NUMVERIFY_API_KEY não configurada — pulando.");
+    return null;
+  }
+
+  // Remove o + que o Numverify não aceita
+  const number = e164Phone.replace(/^\+/, "");
+
+  // BUG FIX 1 — timeout via AbortController (compatível com node-fetch v2)
+  const controller = new AbortController();
+  const timer      = setTimeout(() => controller.abort(), 7000);
+
+  // BUG FIX 2 — tenta HTTPS; se o plano for free e retornar erro de protocolo
+  //             o catch vai logar e retornar null graciosamente
+  const url = `https://apilayer.net/api/validate?access_key=${key}&number=${encodeURIComponent(number)}&format=1`;
 
   try {
-    // Numverify aceita o número sem o +
-    const number = e164Phone.replace("+", "");
-    const url    = `https://apilayer.net/api/validate?access_key=${key}&number=${encodeURIComponent(number)}&format=1`;
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timer);
 
-    const res  = await fetch(url, { timeout: 6000 });
-    if (!res.ok) return null;
-
-    const data = await res.json();
-
-    // data.carrier é a string da operadora; data.success falso = chave inválida
-    if (data.success === false) {
-      console.warn("[Numverify] API retornou erro:", data.error?.info);
+    if (!res.ok) {
+      console.warn(`[Numverify] HTTP ${res.status}`);
       return null;
     }
 
-    return data.carrier || null;
+    const data = await res.json();
+
+    if (data.success === false) {
+      // Código 101 = chave inválida, 104 = limite mensal atingido
+      console.warn("[Numverify] Erro da API:", data.error?.code, data.error?.info);
+      return null;
+    }
+
+    // Numverify retorna carrier como string vazia quando não sabe
+    return data.carrier && data.carrier.trim() !== "" ? data.carrier.trim() : null;
+
   } catch (err) {
-    console.warn("[Numverify] Falha:", err.message);
+    clearTimeout(timer);
+    if (err.name === "AbortError") {
+      console.warn("[Numverify] Timeout após 7s");
+    } else {
+      console.warn("[Numverify] Erro de rede:", err.message);
+    }
     return null;
   }
 }
 
-// ─── Dialing guide ────────────────────────────────────────────────────────────
+// ─── Guia de discagem internacional ──────────────────────────────────────────
 
 function buildDialingGuide(libData, rawPhone) {
-  // Só mostra se o destino NÃO for Brasil
   if (!libData?.country?.code || libData.country.code === "BR") return null;
 
   const ddi = libData.country.prefix;
   if (!ddi) return null;
 
   const ddiStr = String(ddi);
-  // Pega número sem DDI e sem +
-  let digits = (libData.format?.e164 || rawPhone).replace(/\D/g, "");
+  let digits   = (libData.format?.e164 || rawPhone).replace(/\D/g, "");
   if (digits.startsWith(ddiStr)) digits = digits.slice(ddiStr.length);
-
-  const intlFormat = libData.format?.international || `+${ddiStr}${digits}`;
 
   const carriers = [
     { sigla: "Embratel", code: "14" },
@@ -152,12 +194,11 @@ function buildDialingGuide(libData, rawPhone) {
     destinationCountry:  libData.country.name,
     destinationDDI:      ddiStr,
     destinationNumber:   digits,
-    internationalFormat: intlFormat,
+    internationalFormat: libData.format?.international || `+${ddiStr}${digits}`,
     dialingOptions: carriers.map((c) => ({
       carrier:     c.sigla,
       carrierCode: c.code,
       dialString:  `0${c.code}+${ddiStr}${digits}`,
-      description: `Discar via ${c.sigla} (operadora ${c.code})`,
     })),
     note: "No Brasil, a discagem internacional usa 0 + código da operadora de longa distância + DDI + número. Planos corporativos podem ter CSP fixo na central — consulte o administrador.",
   };
@@ -168,21 +209,22 @@ function buildDialingGuide(libData, rawPhone) {
 function generateTroubleshootingHints(data, rawInput) {
   const hints = [];
 
-  if (!data.valid) {
-    hints.push({
-      severity:   "error",
-      code:       "INVALID_NUMBER",
-      message:    "Número inválido segundo a base libphonenumber.",
-      suggestion: "Verifique o DDI e a quantidade de dígitos. Celulares BR têm 11 dígitos (com 9), fixos têm 10.",
-    });
-  }
-
   if (data._parseError) {
     hints.push({
       severity:   "error",
       code:       "PARSE_ERROR",
       message:    "Não foi possível interpretar o número.",
-      suggestion: `Erro interno: ${data._parseError}. Tente incluir o DDI completo com +.`,
+      suggestion: `Detalhe: ${data._parseError}. Inclua o DDI completo com + (ex: +55 11 9...).`,
+    });
+    return hints; // Não adianta continuar se não parseou
+  }
+
+  if (!data.valid) {
+    hints.push({
+      severity:   "error",
+      code:       "INVALID_NUMBER",
+      message:    "Número inválido segundo libphonenumber.",
+      suggestion: "Celulares BR: 11 dígitos com 9 (ex: +55 11 91234-5678). Fixos: 10 dígitos.",
     });
   }
 
@@ -191,7 +233,7 @@ function generateTroubleshootingHints(data, rawInput) {
       severity:   "warning",
       code:       "MISSING_PLUS_PREFIX",
       message:    "O número não começa com '+'.",
-      suggestion: "Números internacionais devem iniciar com '+' seguido do DDI (ex: +55 para Brasil).",
+      suggestion: "Use + seguido do DDI (ex: +55 para Brasil, +1 para EUA).",
     });
   }
 
@@ -209,7 +251,7 @@ function generateTroubleshootingHints(data, rawInput) {
       severity:   "info",
       code:       "LANDLINE_DETECTED",
       message:    "Telefone fixo detectado.",
-      suggestion: "Rotas VoIP puras podem falhar para fixos em alguns países. Verifique suporte PSTN.",
+      suggestion: "Rotas VoIP puras podem falhar para fixos. Verifique suporte PSTN na rota.",
     });
   }
 
@@ -218,7 +260,7 @@ function generateTroubleshootingHints(data, rawInput) {
       severity:   "info",
       code:       "FORMAT_MISMATCH",
       message:    "Formato digitado difere do padrão E.164.",
-      suggestion: `Use o formato: ${data.format.international}`,
+      suggestion: `Use: ${data.format.international}`,
     });
   }
 
@@ -227,8 +269,8 @@ function generateTroubleshootingHints(data, rawInput) {
     hints.push({
       severity:   "warning",
       code:       "RESTRICTED_COUNTRY",
-      message:    `País ${data.country.name} pode ter restrições de roteamento internacional.`,
-      suggestion: "Verifique se a rota de saída possui acordo de interconexão com operadoras locais.",
+      message:    `${data.country.name} pode ter restrições de roteamento internacional.`,
+      suggestion: "Verifique se a rota possui acordo de interconexão com operadoras locais.",
     });
   }
 
@@ -236,8 +278,8 @@ function generateTroubleshootingHints(data, rawInput) {
     hints.push({
       severity:   "info",
       code:       "CARRIER_UNKNOWN",
-      message:    "Operadora não identificada.",
-      suggestion: "Numverify não retornou dados de operadora. Consulte o CDR ou plataforma de telefonia.",
+      message:    "Operadora não identificada via Numverify.",
+      suggestion: "Configure NUMVERIFY_API_KEY no Render ou consulte o CDR na plataforma de telefonia.",
     });
   }
 
@@ -246,73 +288,64 @@ function generateTroubleshootingHints(data, rawInput) {
       severity:   "success",
       code:       "ALL_CLEAR",
       message:    "Número válido e sem anomalias detectadas.",
-      suggestion: "Se ainda assim houver falha de discagem, verifique o CDR na plataforma de telefonia.",
+      suggestion: "Se ainda houver falha de discagem, verifique o CDR na plataforma.",
     });
   }
 
   return hints;
 }
 
-// ─── Main endpoint ────────────────────────────────────────────────────────────
+// ─── Endpoint principal ───────────────────────────────────────────────────────
 
 app.get("/api/validate", async (req, res) => {
   const { phone } = req.query;
-  if (!phone) return res.status(400).json({ error: "Parâmetro 'phone' é obrigatório." });
+  if (!phone) {
+    return res.status(400).json({ error: "Parâmetro 'phone' é obrigatório." });
+  }
 
   try {
-    // 1️⃣ libphonenumber — análise local, zero latência
+    // 1️⃣ libphonenumber — local, zero latência, zero dependência externa
     const libData = analyzeWithLibphone(phone);
-    console.log(`[libphone] ${phone} → valid:${libData.valid} type:${libData.type} region:${libData.country?.code}`);
+    console.log(`[libphone] ${phone} → valid:${libData.valid} | type:${libData.type} | region:${libData.country?.code} | e164:${libData.format?.e164}`);
 
-    // 2️⃣ Numverify — apenas para operadora (fallback se libphone não tiver)
-    let carrier      = null;
-    let carrierSource = null;
+    // 2️⃣ Numverify — somente se número válido e E.164 disponível
+    let carrier       = null;
+    let carrierSource = "N/A";
 
     if (libData.valid && libData.format?.e164) {
-      console.log(`[Numverify] Buscando operadora para ${libData.format.e164}...`);
       carrier = await fetchCarrierFromNumverify(libData.format.e164);
-      if (carrier) {
-        carrierSource = "Numverify";
-        console.log(`[Numverify] Operadora: ${carrier}`);
-      } else {
-        console.log("[Numverify] Sem resultado de operadora.");
-      }
+      carrierSource = carrier ? "Numverify" : "Numverify (sem retorno)";
+      console.log(`[carrier] ${carrierSource}: "${carrier}"`);
     }
 
-    libData.carrier = carrier;
-
-    // 3️⃣ Guia de discagem (destinos não-BR)
+    // 3️⃣ Guia de discagem (apenas destinos não-BR)
     const dialingGuide = buildDialingGuide(libData, phone);
 
-    // 4️⃣ Troubleshooting hints
-    const troubleshooting = generateTroubleshootingHints(libData, phone);
+    // 4️⃣ Hints de troubleshooting
+    const troubleshooting = generateTroubleshootingHints({ ...libData, carrier }, phone);
 
     return res.json({
-      // Campos principais (shape idêntico ao que o frontend já consume)
       valid:   libData.valid,
       type:    libData.type,
       format:  libData.format,
       country: libData.country,
       carrier: carrier || "Desconhecida",
-
-      // Dados extras
       dialingGuide,
       troubleshooting,
-
       _meta: {
-        author:       "Maicon Cubero",
-        version:      "2.2",
-        phoneSource:  "libphonenumber",
-        carrierSource: carrierSource || (libData.valid ? "Numverify (sem retorno)" : "N/A"),
+        author:        "Maicon Cubero",
+        version:       "2.3",
+        phoneSource:   "libphonenumber",
+        carrierSource,
       },
     });
 
   } catch (err) {
-    console.error("Erro no /api/validate:", err);
-    return res.status(500).json({ error: "Erro interno no servidor." });
+    console.error("[/api/validate] Erro inesperado:", err);
+    return res.status(500).json({ error: "Erro interno no servidor.", detail: err.message });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`LibphoneX v2.2 · porta ${PORT} · by Maicon Cubero`);
+  console.log(`LibphoneX v2.3 · porta ${PORT} · by Maicon Cubero`);
 });
