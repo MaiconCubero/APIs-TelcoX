@@ -36,8 +36,7 @@
 
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background-image:
         linear-gradient(var(--border) 1px, transparent 1px),
         linear-gradient(90deg, var(--border) 1px, transparent 1px);
@@ -50,11 +49,9 @@
     body::after {
       content: '';
       position: fixed;
-      top: -200px;
-      left: 50%;
+      top: -200px; left: 50%;
       transform: translateX(-50%);
-      width: 800px;
-      height: 400px;
+      width: 800px; height: 400px;
       background: radial-gradient(ellipse, rgba(0,212,255,0.08) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
@@ -70,266 +67,161 @@
 
     /* ── HEADER ── */
     header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 28px 0 32px;
       border-bottom: 1px solid var(--border);
       margin-bottom: 48px;
     }
 
-    .logo { display: flex; align-items: baseline; gap: 10px; }
-
     .logo-name {
-      font-family: var(--cond);
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: #fff;
-      text-transform: uppercase;
+      font-family: var(--cond); font-size: 2rem; font-weight: 800;
+      letter-spacing: 2px; color: #fff; text-transform: uppercase;
     }
-
     .logo-name span { color: var(--accent); }
 
     .logo-tag {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
     }
 
     .status-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--accent2);
-      letter-spacing: 1px;
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 0.7rem;
+      color: var(--accent2); letter-spacing: 1px;
     }
 
     .status-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--accent2);
-      box-shadow: 0 0 8px var(--accent2);
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent2); box-shadow: 0 0 8px var(--accent2);
       animation: pulse 2s infinite;
     }
 
-    @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes spin     { to{transform:rotate(360deg)} }
-    @keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    @keyframes slideIn  { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes spin    { to{transform:rotate(360deg)} }
+    @keyframes blink   { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
 
     /* ── SEARCH ── */
-    .search-section {
-      margin-bottom: 48px;
-      animation: fadeUp 0.5s ease both;
-    }
+    .search-section { margin-bottom: 48px; animation: fadeUp 0.5s ease both; }
 
     .section-label {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--accent);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--accent); letter-spacing: 3px;
+      text-transform: uppercase; margin-bottom: 16px;
     }
 
     .search-bar {
-      display: flex;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      background: var(--surface);
-      transition: border-color 0.2s;
+      display: flex; border: 1px solid var(--border);
+      border-radius: 4px; overflow: hidden;
+      background: var(--surface); transition: border-color 0.2s;
     }
-
     .search-bar:focus-within {
       border-color: var(--accent);
       box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(0,212,255,0.1);
     }
 
     .search-prefix {
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      color: var(--accent);
-      background: rgba(0,212,255,0.05);
-      border-right: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 16px;
+      font-family: var(--mono); font-size: 0.85rem; color: var(--accent);
+      background: rgba(0,212,255,0.05); border-right: 1px solid var(--border);
       user-select: none;
     }
 
     #phone-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      padding: 18px 20px;
-      font-family: var(--mono);
-      font-size: 1.1rem;
-      color: #fff;
-      letter-spacing: 2px;
+      flex: 1; background: transparent; border: none; outline: none;
+      padding: 18px 20px; font-family: var(--mono);
+      font-size: 1.1rem; color: #fff; letter-spacing: 2px;
     }
-
     #phone-input::placeholder { color: var(--muted); letter-spacing: 1px; }
 
     .btn-search {
-      padding: 0 32px;
-      background: var(--accent);
-      border: none;
-      cursor: pointer;
-      font-family: var(--cond);
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #000;
-      transition: background 0.2s, box-shadow 0.2s;
-      white-space: nowrap;
+      padding: 0 32px; background: var(--accent); border: none; cursor: pointer;
+      font-family: var(--cond); font-size: 0.9rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; color: #000;
+      transition: background 0.2s, box-shadow 0.2s; white-space: nowrap;
     }
-
-    .btn-search:hover { background: #33ddff; box-shadow: 0 0 20px rgba(0,212,255,0.4); }
+    .btn-search:hover  { background: #33ddff; box-shadow: 0 0 20px rgba(0,212,255,0.4); }
     .btn-search:disabled { background: var(--muted); cursor: not-allowed; box-shadow: none; }
 
     .search-hint { margin-top: 10px; font-size: 0.75rem; color: var(--text-dim); font-family: var(--mono); }
 
     /* ── LOADER ── */
     #loader {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      padding: 60px 0;
+      display: none; flex-direction: column;
+      align-items: center; gap: 16px; padding: 60px 0;
     }
-
     .loader-ring {
       width: 48px; height: 48px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
     }
-
     .loader-text {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      letter-spacing: 2px;
-      animation: blink 1.2s infinite;
+      font-family: var(--mono); font-size: 0.75rem;
+      color: var(--text-dim); letter-spacing: 2px; animation: blink 1.2s infinite;
     }
 
     /* ── RESULTS ── */
     #results { display: none; animation: fadeUp 0.4s ease both; }
 
     .summary-strip {
-      display: flex;
-      align-items: stretch;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 24px;
+      display: flex; align-items: stretch;
+      border: 1px solid var(--border); border-radius: 4px;
+      overflow: hidden; margin-bottom: 24px;
     }
 
     .validity-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 32px;
-      min-width: 140px;
-      font-family: var(--cond);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px 32px; min-width: 140px; font-family: var(--cond);
     }
-
     .validity-badge.valid   { background: rgba(0,255,157,0.08); border-right: 1px solid rgba(0,255,157,0.2); }
     .validity-badge.invalid { background: rgba(255,59,92,0.08);  border-right: 1px solid rgba(255,59,92,0.2); }
-
     .badge-icon  { font-size: 2rem; line-height: 1; margin-bottom: 6px; }
     .badge-label { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; }
     .validity-badge.valid   .badge-label { color: var(--accent2); }
     .validity-badge.invalid .badge-label { color: var(--danger); }
 
     .summary-fields {
-      display: flex;
-      flex-wrap: wrap;
-      flex: 1;
-      padding: 20px 24px;
-      gap: 20px 40px;
-      background: var(--panel);
+      display: flex; flex-wrap: wrap; flex: 1;
+      padding: 20px 24px; gap: 20px 40px; background: var(--panel);
     }
-
     .sf { display: flex; flex-direction: column; gap: 4px; }
-
     .sf-label {
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      font-family: var(--mono); font-size: 0.6rem;
+      color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase;
     }
-
     .sf-value { font-family: var(--mono); font-size: 0.95rem; color: #fff; }
     .sf-value.accent  { color: var(--accent); }
     .sf-value.accent2 { color: var(--accent2); }
     .sf-value.warn    { color: var(--warn); }
     .sf-value.danger  { color: var(--danger); }
 
-    .panels {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
     @media (max-width: 640px) { .panels { grid-template-columns: 1fr; } }
 
     .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 20px 24px;
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 4px; padding: 20px 24px;
     }
-
     .panel-title {
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 16px;
-      padding-bottom: 10px;
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 16px; padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     }
 
     .panel-badge {
-      font-size: 0.55rem;
-      padding: 2px 6px;
-      border-radius: 2px;
-      font-weight: 700;
-      letter-spacing: 1px;
+      font-size: 0.55rem; padding: 2px 6px; border-radius: 2px;
+      font-weight: 700; letter-spacing: 1px;
     }
-
     .panel-badge.lib { background: rgba(0,212,255,0.12); color: var(--accent);  border: 1px solid rgba(0,212,255,0.3); }
     .panel-badge.nv  { background: rgba(255,184,0,0.12); color: var(--warn);    border: 1px solid rgba(255,184,0,0.3); }
     .panel-badge.br  { background: rgba(0,255,157,0.10); color: var(--accent2); border: 1px solid rgba(0,255,157,0.3); }
 
     .kv { display: flex; flex-direction: column; gap: 10px; }
-
-    .kv-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .kv-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .kv-key { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); flex-shrink: 0; }
     .kv-val { font-family: var(--mono); font-size: 0.82rem; color: var(--text); text-align: right; word-break: break-all; }
     .kv-val.green  { color: var(--accent2); }
@@ -339,24 +231,15 @@
 
     .fmt-row  { display: flex; flex-direction: column; gap: 10px; }
     .fmt-item { display: flex; flex-direction: column; gap: 4px; }
-
-    .fmt-tag {
-      font-family: var(--mono);
-      font-size: 0.58rem;
-      color: var(--text-dim);
-      letter-spacing: 2px;
-      text-transform: uppercase;
+    .fmt-tag  {
+      font-family: var(--mono); font-size: 0.58rem;
+      color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase;
     }
-
     .fmt-number {
-      font-family: var(--mono);
-      font-size: 1rem;
-      padding: 10px 14px;
-      border-radius: 3px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.02);
+      font-family: var(--mono); font-size: 1rem;
+      padding: 10px 14px; border-radius: 3px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.02);
     }
-
     .fmt-number.original { color: var(--warn);   border-color: rgba(255,184,0,0.2); }
     .fmt-number.intl     { color: var(--accent2); border-color: rgba(0,255,157,0.2); }
     .fmt-number.local    { color: var(--accent);  border-color: rgba(0,212,255,0.2); }
@@ -365,46 +248,29 @@
     #dialing-panel { margin-bottom: 24px; }
 
     .dialing-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px; padding-bottom: 12px;
       border-bottom: 1px solid var(--border);
     }
-
     .dialing-flag    { font-size: 1.6rem; }
     .dialing-meta    { display: flex; flex-direction: column; gap: 2px; }
     .dialing-country { font-family: var(--cond); font-size: 1rem; font-weight: 700; color: #fff; }
     .dialing-ddi     { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); }
 
     .dialing-note {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-      margin-bottom: 16px;
-      padding: 10px 14px;
+      font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim);
+      line-height: 1.6; margin-bottom: 16px; padding: 10px 14px;
       background: rgba(255,255,255,0.02);
-      border-left: 2px solid var(--accent);
-      border-radius: 0 3px 3px 0;
+      border-left: 2px solid var(--accent); border-radius: 0 3px 3px 0;
     }
-
     .dialing-options { display: flex; flex-direction: column; gap: 8px; }
 
     .dialing-option {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 12px 16px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 12px 16px; background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border); border-radius: 3px; cursor: pointer;
       transition: border-color 0.2s, background 0.2s;
     }
-
     .dialing-option:hover { border-color: var(--accent); background: rgba(0,212,255,0.04); }
     .dialing-option:hover .dial-copy { opacity: 1; }
 
@@ -416,21 +282,14 @@
 
     /* ── TROUBLESHOOTING ── */
     .hints { display: flex; flex-direction: column; gap: 12px; }
-
     .hint {
-      display: flex;
-      gap: 16px;
-      padding: 16px 20px;
-      border-radius: 4px;
-      border-left: 3px solid var(--border);
-      background: rgba(255,255,255,0.02);
+      display: flex; gap: 16px; padding: 16px 20px; border-radius: 4px;
+      border-left: 3px solid var(--border); background: rgba(255,255,255,0.02);
     }
-
     .hint.error   { border-color: var(--danger); background: rgba(255,59,92,0.05); }
     .hint.warning { border-color: var(--warn);   background: rgba(255,184,0,0.05); }
     .hint.info    { border-color: var(--accent);  background: rgba(0,212,255,0.04); }
     .hint.success { border-color: var(--accent2); background: rgba(0,255,157,0.04); }
-
     .hint-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
     .hint-body { display: flex; flex-direction: column; gap: 4px; }
     .hint-code { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
@@ -439,98 +298,50 @@
 
     /* ── RAW JSON ── */
     .raw-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      cursor: pointer;
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 10px 16px;
-      border-radius: 3px;
-      margin-bottom: 12px;
-      transition: color 0.2s, border-color 0.2s;
+      display: flex; align-items: center; gap: 8px; background: none;
+      border: 1px solid var(--border); color: var(--text-dim); cursor: pointer;
+      font-family: var(--mono); font-size: 0.7rem; letter-spacing: 2px;
+      text-transform: uppercase; padding: 10px 16px; border-radius: 3px;
+      margin-bottom: 12px; transition: color 0.2s, border-color 0.2s;
     }
-
     .raw-toggle:hover { color: var(--accent); border-color: var(--accent); }
-
     #raw-json {
-      display: none;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 20px;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      line-height: 1.8;
-      overflow-x: auto;
-      white-space: pre;
+      display: none; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 20px; font-family: var(--mono);
+      font-size: 0.75rem; color: var(--text-dim); line-height: 1.8;
+      overflow-x: auto; white-space: pre;
     }
 
     /* ── ERROR ── */
     #error-box {
-      display: none;
-      background: rgba(255,59,92,0.06);
-      border: 1px solid rgba(255,59,92,0.3);
-      border-radius: 4px;
-      padding: 20px 24px;
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      color: var(--danger);
-      animation: fadeUp 0.3s ease both;
+      display: none; background: rgba(255,59,92,0.06);
+      border: 1px solid rgba(255,59,92,0.3); border-radius: 4px;
+      padding: 20px 24px; font-family: var(--mono);
+      font-size: 0.82rem; color: var(--danger); animation: fadeUp 0.3s ease both;
     }
 
     /* ── FOOTER ── */
     footer {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      border-top: 1px solid var(--border);
-      background: rgba(8,12,16,0.92);
-      backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 32px;
-      font-family: var(--mono);
-      font-size: 0.62rem;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-      z-index: 10;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      border-top: 1px solid var(--border); background: rgba(8,12,16,0.92);
+      backdrop-filter: blur(10px); display: flex; align-items: center;
+      justify-content: space-between; padding: 10px 32px;
+      font-family: var(--mono); font-size: 0.62rem;
+      color: var(--text-dim); letter-spacing: 1px; z-index: 10;
     }
-
     .footer-author {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--accent2);
-      font-size: 0.62rem;
-      letter-spacing: 1px;
-      text-decoration: none;
-      transition: color 0.2s;
+      display: flex; align-items: center; gap: 6px;
+      color: var(--accent2); font-size: 0.62rem; letter-spacing: 1px;
+      text-decoration: none; transition: color 0.2s;
     }
-
     .footer-author:hover { color: #fff; }
-
     .footer-author-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--accent2);
-      box-shadow: 0 0 6px var(--accent2);
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent2); box-shadow: 0 0 6px var(--accent2);
     }
 
     /* ── SECTION DIVIDER ── */
-    .section-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
+    .section-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
     .section-divider .section-label { margin-bottom: 0; }
     .section-divider-line { flex: 1; height: 1px; background: var(--border); }
   </style>
@@ -578,7 +389,6 @@
 
   <div id="results">
 
-    <!-- Summary strip -->
     <div class="summary-strip">
       <div class="validity-badge" id="validity-badge">
         <div class="badge-icon"  id="badge-icon"></div>
@@ -587,7 +397,6 @@
       <div class="summary-fields" id="summary-fields"></div>
     </div>
 
-    <!-- Format + Line info -->
     <div class="panels">
       <div class="panel">
         <div class="panel-title">
@@ -602,7 +411,7 @@
       </div>
     </div>
 
-    <!-- Dialing guide (international dest only) -->
+    <!-- Dialing guide — aparece só para destinos não-BR -->
     <div id="dialing-panel" style="display:none">
       <div class="section-divider">
         <div class="section-label">// Guia de discagem internacional</div>
@@ -617,7 +426,6 @@
       </div>
     </div>
 
-    <!-- Troubleshooting -->
     <div class="panel" style="margin-bottom:16px">
       <div class="panel-title">// Diagnóstico de troubleshooting</div>
       <div class="hints" id="hints"></div>
@@ -630,7 +438,7 @@
 </div>
 
 <footer>
-  <span>LIBPHONEX v2.2 · libphonenumber + Numverify</span>
+  <span>LIBPHONEX v2.3 · libphonenumber + Numverify</span>
   <span id="last-query">—</span>
   <a class="footer-author" href="https://github.com/maiconcubero" target="_blank" rel="noopener">
     <div class="footer-author-dot"></div>
@@ -642,22 +450,18 @@
   const BACKEND_URL = "https://apis-telcox.onrender.com";
   const hintIcons   = { error:"🔴", warning:"🟡", info:"🔵", success:"🟢" };
 
-  // ── MAIN ────────────────────────────────────────────────
-
   async function validatePhone() {
     const input = document.getElementById("phone-input");
     const phone = input.value.trim();
     if (!phone) { showError("Digite um número de telefone para analisar."); return; }
 
-    setLoading(true, "ANALISANDO COM LIBPHONENUMBER...");
+    setLoading(true, "ANALISANDO...");
     hideAll();
 
     try {
       const res  = await fetch(`${BACKEND_URL}/api/validate?phone=${encodeURIComponent(phone)}`);
       const data = await res.json();
-
       if (!res.ok) { showError(data.error || "Erro desconhecido do backend."); return; }
-
       renderResults(data, phone);
       document.getElementById("last-query").textContent =
         `LAST: ${phone} · ${new Date().toLocaleTimeString("pt-BR")}`;
@@ -668,8 +472,6 @@
     }
   }
 
-  // ── RENDER ──────────────────────────────────────────────
-
   function renderResults(data, rawPhone) {
     // Badge
     const badge = document.getElementById("validity-badge");
@@ -677,12 +479,11 @@
     document.getElementById("badge-icon").textContent  = data.valid ? "✓" : "✗";
     document.getElementById("badge-label").textContent = data.valid ? "VÁLIDO" : "INVÁLIDO";
 
-    // Carrier source tag
-    const srcTag = data._meta?.carrierSource && !data._meta.carrierSource.includes("sem retorno")
+    // Tag de fonte da operadora
+    const nvTag = data._meta?.carrierSource === "Numverify"
       ? ` <span style="font-size:0.55rem;color:var(--warn);border:1px solid rgba(255,184,0,0.3);padding:1px 5px;border-radius:2px">NV</span>`
       : '';
 
-    // Summary fields
     document.getElementById("summary-fields").innerHTML = `
       <div class="sf">
         <div class="sf-label">País</div>
@@ -694,7 +495,7 @@
       </div>
       <div class="sf">
         <div class="sf-label">Operadora</div>
-        <div class="sf-value accent">${data.carrier || "—"}${srcTag}</div>
+        <div class="sf-value accent">${data.carrier || "—"}${nvTag}</div>
       </div>
       <div class="sf">
         <div class="sf-label">Número digitado</div>
@@ -702,7 +503,6 @@
       </div>
     `;
 
-    // Formats
     document.getElementById("fmt-row").innerHTML = `
       <div class="fmt-item">
         <div class="fmt-tag">Como digitado</div>
@@ -718,20 +518,17 @@
       </div>
     `;
 
-    // Line KV
-    const carrierLabel = data._meta?.carrierSource?.includes("Numverify") ? "Operadora (Numverify)" : "Operadora";
+    const carrierLabel = data._meta?.carrierSource === "Numverify" ? "Operadora (Numverify)" : "Operadora";
     document.getElementById("kv-line").innerHTML =
-      kvRow("Válido",          data.valid ? "SIM" : "NÃO", data.valid ? "green" : "red")
-    + kvRow("Tipo",            translateType(data.type), lineTypeColor(data.type))
-    + kvRow(carrierLabel,      data.carrier || "Desconhecida", data.carrier && data.carrier !== "Desconhecida" ? "yellow" : "")
-    + kvRow("País (código)",   data.country?.code   || "—", "")
-    + kvRow("DDI",             data.country?.prefix ? `+${data.country.prefix}` : "—", "blue")
-    + kvRow("E.164",           data.format?.e164    || "—", "");
+      kvRow("Válido",        data.valid ? "SIM" : "NÃO", data.valid ? "green" : "red")
+    + kvRow("Tipo",          translateType(data.type), lineTypeColor(data.type))
+    + kvRow(carrierLabel,    data.carrier || "Desconhecida", data.carrier && data.carrier !== "Desconhecida" ? "yellow" : "")
+    + kvRow("País (código)", data.country?.code   || "—", "")
+    + kvRow("DDI",           data.country?.prefix ? `+${data.country.prefix}` : "—", "blue")
+    + kvRow("E.164",         data.format?.e164    || "—", "");
 
-    // Dialing guide
     renderDialingGuide(data.dialingGuide);
 
-    // Hints
     document.getElementById("hints").innerHTML = (data.troubleshooting || []).map(h => `
       <div class="hint ${h.severity}">
         <div class="hint-icon">${hintIcons[h.severity] || "•"}</div>
@@ -743,12 +540,9 @@
       </div>
     `).join("");
 
-    // Raw JSON
     document.getElementById("raw-json").textContent = JSON.stringify(data, null, 2);
     document.getElementById("results").style.display = "block";
   }
-
-  // ── DIALING GUIDE ────────────────────────────────────────
 
   function renderDialingGuide(guide) {
     const panel   = document.getElementById("dialing-panel");
@@ -765,8 +559,7 @@
         </div>
       </div>
       <div class="dialing-note">ℹ ${guide.note}</div>
-      <div class="dialing-options">
-    `;
+      <div class="dialing-options">`;
 
     guide.dialingOptions.forEach(opt => {
       html += `
@@ -791,26 +584,20 @@
   function copyDial(el, str) {
     navigator.clipboard.writeText(str).then(() => {
       const cp = el.querySelector(".dial-copy");
-      cp.textContent = "[ COPIADO ✓ ]";
-      cp.classList.add("dial-copied");
+      cp.textContent = "[ COPIADO ✓ ]"; cp.classList.add("dial-copied");
       setTimeout(() => { cp.textContent = "[ COPIAR ]"; cp.classList.remove("dial-copied"); }, 2000);
     });
   }
 
-  // ── HELPERS ──────────────────────────────────────────────
-
   function kvRow(key, val, cls) {
     return `<div class="kv-row"><span class="kv-key">${key}</span><span class="kv-val ${cls}">${val}</span></div>`;
   }
-
   function translateType(t) {
     return { mobile:"Celular", landline:"Fixo", satellite:"Satélite", voip:"VoIP", unknown:"Desconhecido" }[t] || t || "—";
   }
-
   function lineTypeColor(t) {
     return { mobile:"green", landline:"blue", voip:"yellow", unknown:"red" }[t] || "";
   }
-
   function countryFlag(ddi) {
     const map = {
       "1":"🇺🇸","7":"🇷🇺","20":"🇪🇬","27":"🇿🇦","30":"🇬🇷","31":"🇳🇱","32":"🇧🇪",
@@ -831,32 +618,26 @@
     };
     return map[String(ddi)] || "🌍";
   }
-
   function toggleRaw() {
-    const el   = document.getElementById("raw-json");
-    const btn  = document.querySelector(".raw-toggle");
+    const el = document.getElementById("raw-json");
+    const btn = document.querySelector(".raw-toggle");
     const open = el.style.display === "block";
     el.style.display = open ? "none" : "block";
     btn.textContent  = (open ? "▶" : "▼") + " Ver resposta bruta da API";
   }
-
   function showError(msg) {
     const el = document.getElementById("error-box");
-    el.style.display = "block";
-    el.textContent   = `⚠ ERRO: ${msg}`;
+    el.style.display = "block"; el.textContent = `⚠ ERRO: ${msg}`;
   }
-
   function hideAll() {
     document.getElementById("results").style.display   = "none";
     document.getElementById("error-box").style.display = "none";
   }
-
   function setLoading(on, msg) {
     document.getElementById("loader").style.display = on ? "flex" : "none";
     document.getElementById("btn-search").disabled  = on;
     if (msg) document.getElementById("loader-text").textContent = msg;
   }
-
   document.getElementById("phone-input").addEventListener("keydown", e => {
     if (e.key === "Enter") validatePhone();
   });
