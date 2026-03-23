@@ -38,3 +38,22 @@ A API está disponível publicamente em:
 ### Uso via API (exemplo com cURL)
 ```bash
 curl -X GET "https://maiconcubero.github.io/APIs-TelcoX/api/validate?number=+5511999999999"
+````
+
+🧠 Fontes de Dados
+A LibPhoneX consolida informações das seguintes fontes confiáveis:
+
+libphonenumber – Biblioteca do Google para validação e formatação de números internacionais.
+
+Numverify – API de validação de números globais.
+
+Abstract – API de verificação de telefones.
+
+A transparência sobre a origem dos dados ajuda usuários e desenvolvedores a entenderem a confiabilidade das informações fornecidas.
+
+
+## 🤝 Contribuições
+Sugestões, melhorias e relatos de problemas são bem-vindos. A ideia é manter a ferramenta útil e acessível para quem lida diariamente com chamadas internacionais e suporte técnico.
+
+Desenvolvido com foco em resolver um problema real de forma simples e transparente.<br>
+📍 https://maiconcubero.github.io/APIs-TelcoX/
