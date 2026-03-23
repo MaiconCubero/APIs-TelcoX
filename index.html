@@ -100,7 +100,6 @@
     @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
     @keyframes spin    { to{transform:rotate(360deg)} }
     @keyframes blink   { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    @keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
 
     /* ── SEARCH ── */
     .search-section { margin-bottom: 48px; animation: fadeUp 0.5s ease both; }
@@ -145,6 +144,17 @@
     .btn-search:disabled { background: var(--muted); cursor: not-allowed; box-shadow: none; }
 
     .search-hint { margin-top: 10px; font-size: 0.75rem; color: var(--text-dim); font-family: var(--mono); }
+
+    /* pill que aparece quando normaliza 00 → + */
+    .normalize-pill {
+      display: none;
+      margin-top: 8px;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--accent2);
+      letter-spacing: 1px;
+    }
+    .normalize-pill.show { display: block; }
 
     /* ── LOADER ── */
     #loader {
@@ -369,7 +379,7 @@
       <input
         id="phone-input"
         type="text"
-        placeholder="+55 11 91234-5678"
+        placeholder="+55 11 91234-5678  ou  0055 11 91234-5678"
         autocomplete="off"
         spellcheck="false"
       />
@@ -377,7 +387,8 @@
         Analisar
       </button>
     </div>
-    <div class="search-hint">» Digite com DDI (ex: +55 para Brasil, +1 para EUA). Análise via libphonenumber + Numverify.</div>
+    <div class="search-hint">» Aceita <strong style="color:var(--accent2)">+DDI</strong> ou <strong style="color:var(--accent2)">00DDI</strong> — ex: +5511... ou 005511... Números BR sem DDI também são aceitos.</div>
+    <div class="normalize-pill" id="normalize-pill">⟳ Prefixo "00" convertido para "+" automaticamente</div>
   </section>
 
   <div id="loader">
@@ -438,7 +449,7 @@
 </div>
 
 <footer>
-  <span>LIBPHONEX v2.3 · libphonenumber + Numverify</span>
+  <span>LIBPHONEX v2.4 · libphonenumber + Numverify</span>
   <span id="last-query">—</span>
   <a class="footer-author" href="https://github.com/maiconcubero" target="_blank" rel="noopener">
     <div class="footer-author-dot"></div>
@@ -450,21 +461,55 @@
   const BACKEND_URL = "https://apis-telcox.onrender.com";
   const hintIcons   = { error:"🔴", warning:"🟡", info:"🔵", success:"🟢" };
 
+  // ── Normalização de entrada ──────────────────────────────
+  // Converte qualquer prefixo de saída internacional para E.164 (+)
+  // Suporta:
+  //   +55...       → mantém
+  //   0055...      → +55...   (padrão IDD internacional)
+  //   00 1...      → +1...
+  //   55 11...     → tenta como BR (sem prefixo, só dígitos)
+  function normalizeInput(raw) {
+    // Remove espaços das bordas
+    let v = raw.trim();
+
+    // Se começar com 00 seguido de dígitos: substitui por +
+    // "0055 11 9..." → "+55 11 9..."
+    if (/^00\d/.test(v)) {
+      v = "+" + v.slice(2);
+      return { normalized: v, wasConverted: true };
+    }
+
+    return { normalized: v, wasConverted: false };
+  }
+
+  // ── MAIN ────────────────────────────────────────────────
+
   async function validatePhone() {
     const input = document.getElementById("phone-input");
-    const phone = input.value.trim();
-    if (!phone) { showError("Digite um número de telefone para analisar."); return; }
+    const { normalized, wasConverted } = normalizeInput(input.value);
+
+    if (!normalized) { showError("Digite um número de telefone para analisar."); return; }
+
+    // Feedback visual se converteu 00 → +
+    const pill = document.getElementById("normalize-pill");
+    if (wasConverted) {
+      pill.classList.add("show");
+      // Atualiza o campo para mostrar o número normalizado
+      input.value = normalized;
+    } else {
+      pill.classList.remove("show");
+    }
 
     setLoading(true, "ANALISANDO...");
     hideAll();
 
     try {
-      const res  = await fetch(`${BACKEND_URL}/api/validate?phone=${encodeURIComponent(phone)}`);
+      const res  = await fetch(`${BACKEND_URL}/api/validate?phone=${encodeURIComponent(normalized)}`);
       const data = await res.json();
       if (!res.ok) { showError(data.error || "Erro desconhecido do backend."); return; }
-      renderResults(data, phone);
+      renderResults(data, normalized);
       document.getElementById("last-query").textContent =
-        `LAST: ${phone} · ${new Date().toLocaleTimeString("pt-BR")}`;
+        `LAST: ${normalized} · ${new Date().toLocaleTimeString("pt-BR")}`;
     } catch (err) {
       showError("Não foi possível conectar ao backend. Verifique se o Render está online.");
     } finally {
@@ -472,14 +517,14 @@
     }
   }
 
+  // ── RENDER ──────────────────────────────────────────────
+
   function renderResults(data, rawPhone) {
-    // Badge
     const badge = document.getElementById("validity-badge");
     badge.className = `validity-badge ${data.valid ? "valid" : "invalid"}`;
     document.getElementById("badge-icon").textContent  = data.valid ? "✓" : "✗";
     document.getElementById("badge-label").textContent = data.valid ? "VÁLIDO" : "INVÁLIDO";
 
-    // Tag de fonte da operadora
     const nvTag = data._meta?.carrierSource === "Numverify"
       ? ` <span style="font-size:0.55rem;color:var(--warn);border:1px solid rgba(255,184,0,0.3);padding:1px 5px;border-radius:2px">NV</span>`
       : '';
@@ -544,6 +589,8 @@
     document.getElementById("results").style.display = "block";
   }
 
+  // ── DIALING GUIDE ────────────────────────────────────────
+
   function renderDialingGuide(guide) {
     const panel   = document.getElementById("dialing-panel");
     const content = document.getElementById("dialing-content");
@@ -588,6 +635,8 @@
       setTimeout(() => { cp.textContent = "[ COPIAR ]"; cp.classList.remove("dial-copied"); }, 2000);
     });
   }
+
+  // ── HELPERS ──────────────────────────────────────────────
 
   function kvRow(key, val, cls) {
     return `<div class="kv-row"><span class="kv-key">${key}</span><span class="kv-val ${cls}">${val}</span></div>`;
