@@ -109,62 +109,49 @@ function analyzeWithLibphone(rawPhone) {
   }
 }
 
-// ─── Numverify: busca operadora ───────────────────────────────────────────────
+// ─── Abstract: busca operadora ───────────────────────────────────────────────
 //
-// BUG FIX 1: node-fetch v2 não aceita `timeout` como opção nativa —
-//            usa AbortController + setTimeout para timeout real.
-// BUG FIX 2: Numverify v1 endpoint correto:
-//            https://apilayer.net/api/validate   (HTTPS funciona no plano pago)
-//            http://apilayer.net/api/validate    (HTTP — plano gratuito)
-//            Render bloqueia HTTP de saída, então tentamos HTTPS primeiro e
-//            caímos em HTTP com workaround se necessário.
-//            Env var: NUMVERIFY_API_KEY
+// A chave do Abstract fica somente no backend/proxy (Render), evitando expor
+// o segredo no frontend hospedado no GitHub Pages.
+// Env var: ABSTRACT_API_KEY
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function fetchCarrierFromNumverify(e164Phone) {
-  const key = process.env.NUMVERIFY_API_KEY;
+async function fetchCarrierFromAbstract(e164Phone) {
+  const key = process.env.ABSTRACT_API_KEY;
   if (!key) {
-    console.log("[Numverify] NUMVERIFY_API_KEY não configurada — pulando.");
+    console.log("[Abstract] ABSTRACT_API_KEY não configurada — pulando.");
     return null;
   }
 
-  // Remove o + que o Numverify não aceita
-  const number = e164Phone.replace(/^\+/, "");
-
-  // BUG FIX 1 — timeout via AbortController (compatível com node-fetch v2)
   const controller = new AbortController();
   const timer      = setTimeout(() => controller.abort(), 7000);
 
-  // BUG FIX 2 — tenta HTTPS; se o plano for free e retornar erro de protocolo
-  //             o catch vai logar e retornar null graciosamente
-  const url = `https://apilayer.net/api/validate?access_key=${key}&number=${encodeURIComponent(number)}&format=1`;
+   const url        = `https://phonevalidation.abstractapi.com/v1/?api_key=${encodeURIComponent(key)}&phone=${encodeURIComponent(e164Phone)}`;
 
   try {
     const res = await fetch(url, { signal: controller.signal });
     clearTimeout(timer);
 
     if (!res.ok) {
-      console.warn(`[Numverify] HTTP ${res.status}`);
+      console.warn(`[Abstract] HTTP ${res.status}`);
       return null;
     }
 
     const data = await res.json();
 
-    if (data.success === false) {
-      // Código 101 = chave inválida, 104 = limite mensal atingido
-      console.warn("[Numverify] Erro da API:", data.error?.code, data.error?.info);
+    if (data.error) {
+      console.warn("[Abstract] Erro da API:", data.error?.message || data.error);
       return null;
     }
 
-    // Numverify retorna carrier como string vazia quando não sabe
     return data.carrier && data.carrier.trim() !== "" ? data.carrier.trim() : null;
 
   } catch (err) {
     clearTimeout(timer);
     if (err.name === "AbortError") {
-      console.warn("[Numverify] Timeout após 7s");
+      console.warn("[Abstract] Timeout após 7s");
     } else {
-      console.warn("[Numverify] Erro de rede:", err.message);
+      console.warn("[Abstract] Erro de rede:", err.message);
     }
     return null;
   }
@@ -278,8 +265,8 @@ function generateTroubleshootingHints(data, rawInput) {
     hints.push({
       severity:   "info",
       code:       "CARRIER_UNKNOWN",
-      message:    "Operadora não identificada via Numverify.",
-      suggestion: "Configure NUMVERIFY_API_KEY no Render ou consulte o CDR na plataforma de telefonia.",
+      message:    "Operadora não identificada via Abstract.",
+      suggestion: "Configure ABSTRACT_API_KEY no Render ou consulte o CDR na plataforma de telefonia.",
     });
   }
 
@@ -308,13 +295,13 @@ app.get("/api/validate", async (req, res) => {
     const libData = analyzeWithLibphone(phone);
     console.log(`[libphone] ${phone} → valid:${libData.valid} | type:${libData.type} | region:${libData.country?.code} | e164:${libData.format?.e164}`);
 
-    // 2️⃣ Numverify — somente se número válido e E.164 disponível
+    // 2️⃣ Abstract — somente se número válido e E.164 disponível
     let carrier       = null;
     let carrierSource = "N/A";
 
     if (libData.valid && libData.format?.e164) {
-      carrier = await fetchCarrierFromNumverify(libData.format.e164);
-      carrierSource = carrier ? "Numverify" : "Numverify (sem retorno)";
+      carrier = await fetchCarrierFromAbstract(libData.format.e164);
+      carrierSource = carrier ? "Abstract" : "Abstract (sem retorno)";
       console.log(`[carrier] ${carrierSource}: "${carrier}"`);
     }
 
