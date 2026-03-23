@@ -6,7 +6,7 @@ Em vez de depender de verificadores complexos ou formatos de código confusos, a
 
 ##  Propósito
 
-A API nasceu da necessidade real de centralizar e simplificar a validação de números internacionais. Ela combina múltiplas fontes confiáveis (libphonenumber, Numverify, Abstract) em uma única interface amigável, permitindo que qualquer pessoa — desde agentes de suporte até desenvolvedores — verifique rapidamente se um número é válido e como ele deve ser discado corretamente.
+A API nasceu da necessidade real de centralizar e simplificar a validação de números internacionais. Ela combina múltiplas fontes confiáveis (libphonenumber e Abstract) em uma única interface amigável, permitindo que qualquer pessoa — desde agentes de suporte até desenvolvedores — verifique rapidamente se um número é válido e como ele deve ser discado corretamente.
 
 ##  Funcionalidades
 
@@ -17,7 +17,7 @@ A API nasceu da necessidade real de centralizar e simplificar a validação de n
   - Origem **móvel**
   - Origem **fixa**
   - **Central telefônica** (PABX)
-- **Transparência de dados**: indica claramente a fonte da informação (libphonenumber, Numverify, Abstract).
+- **Transparência de dados**: indica claramente a fonte da informação (libphonenumber e Abstract).
 - **Interface web simples** para testes manuais.
 - **API RESTful** disponível para integração com sistemas de suporte, CRMs ou automações.
 
@@ -45,9 +45,7 @@ A LibPhoneX consolida informações das seguintes fontes confiáveis:
 
 libphonenumber – Biblioteca do Google para validação e formatação de números internacionais.
 
-Numverify – API de validação de números globais.
-
-Abstract – API de verificação de telefones.
+Abstract – API de verificação de telefones e identificação de operadora.
 
 A transparência sobre a origem dos dados ajuda usuários e desenvolvedores a entenderem a confiabilidade das informações fornecidas.
 
