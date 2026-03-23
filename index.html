@@ -360,7 +360,7 @@
 </div>
 
 <footer>
-  <span>LIBPHONEX v2.4 · libphonenumber + Numverify</span>
+  <span>LIBPHONEX v2.4 · libphonenumber + Abstract</span>
   <span id="last-query">—</span>
   <a class="footer-author" href="https://github.com/maiconcubero" target="_blank" rel="noopener">
     <div class="footer-author-dot"></div>
@@ -417,14 +417,14 @@
     document.getElementById("badge-icon").textContent  = data.valid ? "✓" : "✗";
     document.getElementById("badge-label").textContent = data.valid ? "VÁLIDO" : "INVÁLIDO";
 
-    const nvTag = data._meta?.carrierSource === "Numverify"
-      ? ` <span style="font-size:0.55rem;color:var(--warn);border:1px solid rgba(255,184,0,0.3);padding:1px 5px;border-radius:2px">NV</span>`
+    const carrierTag = data._meta?.carrierSource === "Abstract"
+      ? ` <span style="font-size:0.55rem;color:var(--warn);border:1px solid rgba(255,184,0,0.3);padding:1px 5px;border-radius:2px">AB</span>`
       : '';
 
     document.getElementById("summary-fields").innerHTML = `
       <div class="sf"><div class="sf-label">País</div><div class="sf-value">${data.country?.name || "—"} (${data.country?.code || "?"})</div></div>
       <div class="sf"><div class="sf-label">Tipo de linha</div><div class="sf-value ${lineTypeColor(data.type)}">${translateType(data.type)}</div></div>
-      <div class="sf"><div class="sf-label">Operadora</div><div class="sf-value accent">${data.carrier || "—"}${nvTag}</div></div>
+      <div class="sf"><div class="sf-label">Operadora</div><div class="sf-value accent">${data.carrier || "—"}${carrierTag}</div></div>
       <div class="sf"><div class="sf-label">Número digitado</div><div class="sf-value warn">${rawPhone}</div></div>
     `;
 
@@ -434,7 +434,7 @@
       <div class="fmt-item"><div class="fmt-tag">Formato local</div><div class="fmt-number local">${data.format?.local || "—"}</div></div>
     `;
 
-    const carrierLabel = data._meta?.carrierSource === "Numverify" ? "Operadora (Numverify)" : "Operadora";
+    const carrierLabel = data._meta?.carrierSource === "Abstract" ? "Operadora (Abstract)" : "Operadora";
     document.getElementById("kv-line").innerHTML =
       kvRow("Válido",        data.valid ? "SIM" : "NÃO", data.valid ? "green" : "red")
     + kvRow("Tipo",          translateType(data.type), lineTypeColor(data.type))
