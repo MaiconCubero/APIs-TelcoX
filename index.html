@@ -27,74 +27,37 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      min-height: 100vh;
-      overflow-x: hidden;
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); min-height: 100vh; overflow-x: hidden;
     }
 
     body::before {
-      content: '';
-      position: fixed; inset: 0;
+      content: ''; position: fixed; inset: 0;
       background-image:
         linear-gradient(var(--border) 1px, transparent 1px),
         linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0.3;
-      pointer-events: none;
-      z-index: 0;
+      background-size: 40px 40px; opacity: 0.3; pointer-events: none; z-index: 0;
     }
 
     body::after {
-      content: '';
-      position: fixed;
-      top: -200px; left: 50%;
-      transform: translateX(-50%);
-      width: 800px; height: 400px;
+      content: ''; position: fixed; top: -200px; left: 50%;
+      transform: translateX(-50%); width: 800px; height: 400px;
       background: radial-gradient(ellipse, rgba(0,212,255,0.08) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
+      pointer-events: none; z-index: 0;
     }
 
-    .wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 24px 100px;
-    }
+    .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 24px 100px; }
 
     /* ── HEADER ── */
     header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 28px 0 32px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 48px;
+      padding: 28px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 48px;
     }
-
-    .logo-name {
-      font-family: var(--cond); font-size: 2rem; font-weight: 800;
-      letter-spacing: 2px; color: #fff; text-transform: uppercase;
-    }
+    .logo-name { font-family: var(--cond); font-size: 2rem; font-weight: 800; letter-spacing: 2px; color: #fff; text-transform: uppercase; }
     .logo-name span { color: var(--accent); }
-
-    .logo-tag {
-      font-family: var(--mono); font-size: 0.65rem;
-      color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
-    }
-
-    .status-pill {
-      display: flex; align-items: center; gap: 8px;
-      font-family: var(--mono); font-size: 0.7rem;
-      color: var(--accent2); letter-spacing: 1px;
-    }
-
-    .status-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--accent2); box-shadow: 0 0 8px var(--accent2);
-      animation: pulse 2s infinite;
-    }
+    .logo-tag { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+    .status-pill { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 0.7rem; color: var(--accent2); letter-spacing: 1px; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); box-shadow: 0 0 8px var(--accent2); animation: pulse 2s infinite; }
 
     @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:0.3} }
     @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
@@ -103,88 +66,29 @@
 
     /* ── SEARCH ── */
     .search-section { margin-bottom: 48px; animation: fadeUp 0.5s ease both; }
-
-    .section-label {
-      font-family: var(--mono); font-size: 0.65rem;
-      color: var(--accent); letter-spacing: 3px;
-      text-transform: uppercase; margin-bottom: 16px;
-    }
-
-    .search-bar {
-      display: flex; border: 1px solid var(--border);
-      border-radius: 4px; overflow: hidden;
-      background: var(--surface); transition: border-color 0.2s;
-    }
-    .search-bar:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(0,212,255,0.1);
-    }
-
-    .search-prefix {
-      display: flex; align-items: center; padding: 0 16px;
-      font-family: var(--mono); font-size: 0.85rem; color: var(--accent);
-      background: rgba(0,212,255,0.05); border-right: 1px solid var(--border);
-      user-select: none;
-    }
-
-    #phone-input {
-      flex: 1; background: transparent; border: none; outline: none;
-      padding: 18px 20px; font-family: var(--mono);
-      font-size: 1.1rem; color: #fff; letter-spacing: 2px;
-    }
+    .section-label { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; }
+    .search-bar { display: flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; background: var(--surface); transition: border-color 0.2s; }
+    .search-bar:focus-within { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(0,212,255,0.1); }
+    .search-prefix { display: flex; align-items: center; padding: 0 16px; font-family: var(--mono); font-size: 0.85rem; color: var(--accent); background: rgba(0,212,255,0.05); border-right: 1px solid var(--border); user-select: none; }
+    #phone-input { flex: 1; background: transparent; border: none; outline: none; padding: 18px 20px; font-family: var(--mono); font-size: 1.1rem; color: #fff; letter-spacing: 2px; }
     #phone-input::placeholder { color: var(--muted); letter-spacing: 1px; }
-
-    .btn-search {
-      padding: 0 32px; background: var(--accent); border: none; cursor: pointer;
-      font-family: var(--cond); font-size: 0.9rem; font-weight: 700;
-      letter-spacing: 2px; text-transform: uppercase; color: #000;
-      transition: background 0.2s, box-shadow 0.2s; white-space: nowrap;
-    }
-    .btn-search:hover  { background: #33ddff; box-shadow: 0 0 20px rgba(0,212,255,0.4); }
+    .btn-search { padding: 0 32px; background: var(--accent); border: none; cursor: pointer; font-family: var(--cond); font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #000; transition: background 0.2s, box-shadow 0.2s; white-space: nowrap; }
+    .btn-search:hover { background: #33ddff; box-shadow: 0 0 20px rgba(0,212,255,0.4); }
     .btn-search:disabled { background: var(--muted); cursor: not-allowed; box-shadow: none; }
-
     .search-hint { margin-top: 10px; font-size: 0.75rem; color: var(--text-dim); font-family: var(--mono); }
-
-    /* pill que aparece quando normaliza 00 → + */
-    .normalize-pill {
-      display: none;
-      margin-top: 8px;
-      font-family: var(--mono);
-      font-size: 0.68rem;
-      color: var(--accent2);
-      letter-spacing: 1px;
-    }
+    .normalize-pill { display: none; margin-top: 8px; font-family: var(--mono); font-size: 0.68rem; color: var(--accent2); letter-spacing: 1px; }
     .normalize-pill.show { display: block; }
 
     /* ── LOADER ── */
-    #loader {
-      display: none; flex-direction: column;
-      align-items: center; gap: 16px; padding: 60px 0;
-    }
-    .loader-ring {
-      width: 48px; height: 48px;
-      border: 2px solid var(--border); border-top-color: var(--accent);
-      border-radius: 50%; animation: spin 0.8s linear infinite;
-    }
-    .loader-text {
-      font-family: var(--mono); font-size: 0.75rem;
-      color: var(--text-dim); letter-spacing: 2px; animation: blink 1.2s infinite;
-    }
+    #loader { display: none; flex-direction: column; align-items: center; gap: 16px; padding: 60px 0; }
+    .loader-ring { width: 48px; height: 48px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .loader-text { font-family: var(--mono); font-size: 0.75rem; color: var(--text-dim); letter-spacing: 2px; animation: blink 1.2s infinite; }
 
     /* ── RESULTS ── */
     #results { display: none; animation: fadeUp 0.4s ease both; }
 
-    .summary-strip {
-      display: flex; align-items: stretch;
-      border: 1px solid var(--border); border-radius: 4px;
-      overflow: hidden; margin-bottom: 24px;
-    }
-
-    .validity-badge {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 24px 32px; min-width: 140px; font-family: var(--cond);
-    }
+    .summary-strip { display: flex; align-items: stretch; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+    .validity-badge { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 32px; min-width: 140px; font-family: var(--cond); }
     .validity-badge.valid   { background: rgba(0,255,157,0.08); border-right: 1px solid rgba(0,255,157,0.2); }
     .validity-badge.invalid { background: rgba(255,59,92,0.08);  border-right: 1px solid rgba(255,59,92,0.2); }
     .badge-icon  { font-size: 2rem; line-height: 1; margin-bottom: 6px; }
@@ -192,15 +96,9 @@
     .validity-badge.valid   .badge-label { color: var(--accent2); }
     .validity-badge.invalid .badge-label { color: var(--danger); }
 
-    .summary-fields {
-      display: flex; flex-wrap: wrap; flex: 1;
-      padding: 20px 24px; gap: 20px 40px; background: var(--panel);
-    }
+    .summary-fields { display: flex; flex-wrap: wrap; flex: 1; padding: 20px 24px; gap: 20px 40px; background: var(--panel); }
     .sf { display: flex; flex-direction: column; gap: 4px; }
-    .sf-label {
-      font-family: var(--mono); font-size: 0.6rem;
-      color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase;
-    }
+    .sf-label { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
     .sf-value { font-family: var(--mono); font-size: 0.95rem; color: #fff; }
     .sf-value.accent  { color: var(--accent); }
     .sf-value.accent2 { color: var(--accent2); }
@@ -210,22 +108,10 @@
     .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
     @media (max-width: 640px) { .panels { grid-template-columns: 1fr; } }
 
-    .panel {
-      background: var(--panel); border: 1px solid var(--border);
-      border-radius: 4px; padding: 20px 24px;
-    }
-    .panel-title {
-      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 3px;
-      text-transform: uppercase; color: var(--accent);
-      margin-bottom: 16px; padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    }
+    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 20px 24px; }
+    .panel-title { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-    .panel-badge {
-      font-size: 0.55rem; padding: 2px 6px; border-radius: 2px;
-      font-weight: 700; letter-spacing: 1px;
-    }
+    .panel-badge { font-size: 0.55rem; padding: 2px 6px; border-radius: 2px; font-weight: 700; letter-spacing: 1px; }
     .panel-badge.lib { background: rgba(0,212,255,0.12); color: var(--accent);  border: 1px solid rgba(0,212,255,0.3); }
     .panel-badge.nv  { background: rgba(255,184,0,0.12); color: var(--warn);    border: 1px solid rgba(255,184,0,0.3); }
     .panel-badge.br  { background: rgba(0,255,157,0.10); color: var(--accent2); border: 1px solid rgba(0,255,157,0.3); }
@@ -241,15 +127,8 @@
 
     .fmt-row  { display: flex; flex-direction: column; gap: 10px; }
     .fmt-item { display: flex; flex-direction: column; gap: 4px; }
-    .fmt-tag  {
-      font-family: var(--mono); font-size: 0.58rem;
-      color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase;
-    }
-    .fmt-number {
-      font-family: var(--mono); font-size: 1rem;
-      padding: 10px 14px; border-radius: 3px;
-      border: 1px solid var(--border); background: rgba(255,255,255,0.02);
-    }
+    .fmt-tag  { font-family: var(--mono); font-size: 0.58rem; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
+    .fmt-number { font-family: var(--mono); font-size: 1rem; padding: 10px 14px; border-radius: 3px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); }
     .fmt-number.original { color: var(--warn);   border-color: rgba(255,184,0,0.2); }
     .fmt-number.intl     { color: var(--accent2); border-color: rgba(0,255,157,0.2); }
     .fmt-number.local    { color: var(--accent);  border-color: rgba(0,212,255,0.2); }
@@ -257,22 +136,95 @@
     /* ── DIALING GUIDE ── */
     #dialing-panel { margin-bottom: 24px; }
 
-    .dialing-header {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 16px; padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
+    .dialing-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
     .dialing-flag    { font-size: 1.6rem; }
     .dialing-meta    { display: flex; flex-direction: column; gap: 2px; }
     .dialing-country { font-family: var(--cond); font-size: 1rem; font-weight: 700; color: #fff; }
     .dialing-ddi     { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); }
 
-    .dialing-note {
-      font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim);
-      line-height: 1.6; margin-bottom: 16px; padding: 10px 14px;
-      background: rgba(255,255,255,0.02);
-      border-left: 2px solid var(--accent); border-radius: 0 3px 3px 0;
+    /* ── ORIGIN SELECTOR ── */
+    .origin-selector {
+      display: flex;
+      gap: 0;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
     }
+
+    .origin-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.02);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .origin-btn:last-child { border-right: none; }
+
+    .origin-btn.active {
+      background: rgba(0,212,255,0.08);
+    }
+    .origin-btn.active.pbx {
+      background: rgba(255,184,0,0.08);
+    }
+
+    .origin-btn:hover:not(.active) { background: rgba(255,255,255,0.04); }
+
+    .origin-icon { font-size: 1.3rem; line-height: 1; }
+
+    .origin-label {
+      font-family: var(--cond);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .origin-btn.active     .origin-label { color: var(--accent); }
+    .origin-btn.active.pbx .origin-label { color: var(--warn); }
+
+    .origin-sublabel {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+    .origin-btn.active     .origin-sublabel { color: rgba(0,212,255,0.7); }
+    .origin-btn.active.pbx .origin-sublabel { color: rgba(255,184,0,0.7); }
+
+    .origin-indicator {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: transparent;
+      transition: background 0.2s;
+    }
+    .origin-btn.active     .origin-indicator { background: var(--accent); }
+    .origin-btn.active.pbx .origin-indicator { background: var(--warn); }
+
+    /* Nota contextual abaixo do seletor */
+    .origin-note {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.02);
+      border-left: 2px solid var(--border);
+      border-radius: 0 3px 3px 0;
+      transition: border-color 0.2s;
+    }
+    .origin-note.mobile { border-color: var(--accent); }
+    .origin-note.pbx    { border-color: var(--warn); }
+
     .dialing-options { display: flex; flex-direction: column; gap: 8px; }
 
     .dialing-option {
@@ -292,10 +244,7 @@
 
     /* ── TROUBLESHOOTING ── */
     .hints { display: flex; flex-direction: column; gap: 12px; }
-    .hint {
-      display: flex; gap: 16px; padding: 16px 20px; border-radius: 4px;
-      border-left: 3px solid var(--border); background: rgba(255,255,255,0.02);
-    }
+    .hint { display: flex; gap: 16px; padding: 16px 20px; border-radius: 4px; border-left: 3px solid var(--border); background: rgba(255,255,255,0.02); }
     .hint.error   { border-color: var(--danger); background: rgba(255,59,92,0.05); }
     .hint.warning { border-color: var(--warn);   background: rgba(255,184,0,0.05); }
     .hint.info    { border-color: var(--accent);  background: rgba(0,212,255,0.04); }
@@ -307,48 +256,18 @@
     .hint-sug  { font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; margin-top: 2px; }
 
     /* ── RAW JSON ── */
-    .raw-toggle {
-      display: flex; align-items: center; gap: 8px; background: none;
-      border: 1px solid var(--border); color: var(--text-dim); cursor: pointer;
-      font-family: var(--mono); font-size: 0.7rem; letter-spacing: 2px;
-      text-transform: uppercase; padding: 10px 16px; border-radius: 3px;
-      margin-bottom: 12px; transition: color 0.2s, border-color 0.2s;
-    }
+    .raw-toggle { display: flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; padding: 10px 16px; border-radius: 3px; margin-bottom: 12px; transition: color 0.2s, border-color 0.2s; }
     .raw-toggle:hover { color: var(--accent); border-color: var(--accent); }
-    #raw-json {
-      display: none; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 4px; padding: 20px; font-family: var(--mono);
-      font-size: 0.75rem; color: var(--text-dim); line-height: 1.8;
-      overflow-x: auto; white-space: pre;
-    }
+    #raw-json { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 20px; font-family: var(--mono); font-size: 0.75rem; color: var(--text-dim); line-height: 1.8; overflow-x: auto; white-space: pre; }
 
     /* ── ERROR ── */
-    #error-box {
-      display: none; background: rgba(255,59,92,0.06);
-      border: 1px solid rgba(255,59,92,0.3); border-radius: 4px;
-      padding: 20px 24px; font-family: var(--mono);
-      font-size: 0.82rem; color: var(--danger); animation: fadeUp 0.3s ease both;
-    }
+    #error-box { display: none; background: rgba(255,59,92,0.06); border: 1px solid rgba(255,59,92,0.3); border-radius: 4px; padding: 20px 24px; font-family: var(--mono); font-size: 0.82rem; color: var(--danger); animation: fadeUp 0.3s ease both; }
 
     /* ── FOOTER ── */
-    footer {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      border-top: 1px solid var(--border); background: rgba(8,12,16,0.92);
-      backdrop-filter: blur(10px); display: flex; align-items: center;
-      justify-content: space-between; padding: 10px 32px;
-      font-family: var(--mono); font-size: 0.62rem;
-      color: var(--text-dim); letter-spacing: 1px; z-index: 10;
-    }
-    .footer-author {
-      display: flex; align-items: center; gap: 6px;
-      color: var(--accent2); font-size: 0.62rem; letter-spacing: 1px;
-      text-decoration: none; transition: color 0.2s;
-    }
+    footer { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid var(--border); background: rgba(8,12,16,0.92); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: space-between; padding: 10px 32px; font-family: var(--mono); font-size: 0.62rem; color: var(--text-dim); letter-spacing: 1px; z-index: 10; }
+    .footer-author { display: flex; align-items: center; gap: 6px; color: var(--accent2); font-size: 0.62rem; letter-spacing: 1px; text-decoration: none; transition: color 0.2s; }
     .footer-author:hover { color: #fff; }
-    .footer-author-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--accent2); box-shadow: 0 0 6px var(--accent2);
-    }
+    .footer-author-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
 
     /* ── SECTION DIVIDER ── */
     .section-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -376,16 +295,8 @@
     <div class="section-label">// Entrada do número</div>
     <div class="search-bar">
       <div class="search-prefix">PHONE</div>
-      <input
-        id="phone-input"
-        type="text"
-        placeholder="+55 11 91234-5678  ou  0055 11 91234-5678"
-        autocomplete="off"
-        spellcheck="false"
-      />
-      <button class="btn-search" id="btn-search" onclick="validatePhone()">
-        Analisar
-      </button>
+      <input id="phone-input" type="text" placeholder="+55 11 91234-5678  ou  0055 11 91234-5678" autocomplete="off" spellcheck="false" />
+      <button class="btn-search" id="btn-search" onclick="validatePhone()">Analisar</button>
     </div>
     <div class="search-hint">» Aceita <strong style="color:var(--accent2)">+DDI</strong> ou <strong style="color:var(--accent2)">00DDI</strong> — ex: +5511... ou 005511... Números BR sem DDI também são aceitos.</div>
     <div class="normalize-pill" id="normalize-pill">⟳ Prefixo "00" convertido para "+" automaticamente</div>
@@ -461,44 +372,26 @@
   const BACKEND_URL = "https://apis-telcox.onrender.com";
   const hintIcons   = { error:"🔴", warning:"🟡", info:"🔵", success:"🟢" };
 
+  // Estado global do guia de discagem
+  let _currentGuide  = null;
+  let _dialingOrigin = "mobile"; // "mobile" | "pbx"
+
   // ── Normalização de entrada ──────────────────────────────
-  // Converte qualquer prefixo de saída internacional para E.164 (+)
-  // Suporta:
-  //   +55...       → mantém
-  //   0055...      → +55...   (padrão IDD internacional)
-  //   00 1...      → +1...
-  //   55 11...     → tenta como BR (sem prefixo, só dígitos)
   function normalizeInput(raw) {
-    // Remove espaços das bordas
     let v = raw.trim();
-
-    // Se começar com 00 seguido de dígitos: substitui por +
-    // "0055 11 9..." → "+55 11 9..."
-    if (/^00\d/.test(v)) {
-      v = "+" + v.slice(2);
-      return { normalized: v, wasConverted: true };
-    }
-
+    if (/^00\d/.test(v)) return { normalized: "+" + v.slice(2), wasConverted: true };
     return { normalized: v, wasConverted: false };
   }
 
   // ── MAIN ────────────────────────────────────────────────
-
   async function validatePhone() {
     const input = document.getElementById("phone-input");
     const { normalized, wasConverted } = normalizeInput(input.value);
-
     if (!normalized) { showError("Digite um número de telefone para analisar."); return; }
 
-    // Feedback visual se converteu 00 → +
     const pill = document.getElementById("normalize-pill");
-    if (wasConverted) {
-      pill.classList.add("show");
-      // Atualiza o campo para mostrar o número normalizado
-      input.value = normalized;
-    } else {
-      pill.classList.remove("show");
-    }
+    if (wasConverted) { pill.classList.add("show"); input.value = normalized; }
+    else              { pill.classList.remove("show"); }
 
     setLoading(true, "ANALISANDO...");
     hideAll();
@@ -518,7 +411,6 @@
   }
 
   // ── RENDER ──────────────────────────────────────────────
-
   function renderResults(data, rawPhone) {
     const badge = document.getElementById("validity-badge");
     badge.className = `validity-badge ${data.valid ? "valid" : "invalid"}`;
@@ -530,37 +422,16 @@
       : '';
 
     document.getElementById("summary-fields").innerHTML = `
-      <div class="sf">
-        <div class="sf-label">País</div>
-        <div class="sf-value">${data.country?.name || "—"} (${data.country?.code || "?"})</div>
-      </div>
-      <div class="sf">
-        <div class="sf-label">Tipo de linha</div>
-        <div class="sf-value ${lineTypeColor(data.type)}">${translateType(data.type)}</div>
-      </div>
-      <div class="sf">
-        <div class="sf-label">Operadora</div>
-        <div class="sf-value accent">${data.carrier || "—"}${nvTag}</div>
-      </div>
-      <div class="sf">
-        <div class="sf-label">Número digitado</div>
-        <div class="sf-value warn">${rawPhone}</div>
-      </div>
+      <div class="sf"><div class="sf-label">País</div><div class="sf-value">${data.country?.name || "—"} (${data.country?.code || "?"})</div></div>
+      <div class="sf"><div class="sf-label">Tipo de linha</div><div class="sf-value ${lineTypeColor(data.type)}">${translateType(data.type)}</div></div>
+      <div class="sf"><div class="sf-label">Operadora</div><div class="sf-value accent">${data.carrier || "—"}${nvTag}</div></div>
+      <div class="sf"><div class="sf-label">Número digitado</div><div class="sf-value warn">${rawPhone}</div></div>
     `;
 
     document.getElementById("fmt-row").innerHTML = `
-      <div class="fmt-item">
-        <div class="fmt-tag">Como digitado</div>
-        <div class="fmt-number original">${rawPhone}</div>
-      </div>
-      <div class="fmt-item">
-        <div class="fmt-tag">Formato internacional (E.164)</div>
-        <div class="fmt-number intl">${data.format?.international || "—"}</div>
-      </div>
-      <div class="fmt-item">
-        <div class="fmt-tag">Formato local</div>
-        <div class="fmt-number local">${data.format?.local || "—"}</div>
-      </div>
+      <div class="fmt-item"><div class="fmt-tag">Como digitado</div><div class="fmt-number original">${rawPhone}</div></div>
+      <div class="fmt-item"><div class="fmt-tag">Formato internacional (E.164)</div><div class="fmt-number intl">${data.format?.international || "—"}</div></div>
+      <div class="fmt-item"><div class="fmt-tag">Formato local</div><div class="fmt-number local">${data.format?.local || "—"}</div></div>
     `;
 
     const carrierLabel = data._meta?.carrierSource === "Numverify" ? "Operadora (Numverify)" : "Operadora";
@@ -572,7 +443,9 @@
     + kvRow("DDI",           data.country?.prefix ? `+${data.country.prefix}` : "—", "blue")
     + kvRow("E.164",         data.format?.e164    || "—", "");
 
-    renderDialingGuide(data.dialingGuide);
+    // Salva guia e renderiza
+    _currentGuide = data.dialingGuide || null;
+    renderDialingGuide(_currentGuide, _dialingOrigin);
 
     document.getElementById("hints").innerHTML = (data.troubleshooting || []).map(h => `
       <div class="hint ${h.severity}">
@@ -590,12 +463,36 @@
   }
 
   // ── DIALING GUIDE ────────────────────────────────────────
-
-  function renderDialingGuide(guide) {
+  //
+  // origin = "mobile" → discagem padrão: 0XX+DDI+número
+  // origin = "pbx"    → central telefônica: 00XX+DDI+número  (prefixo 00 para saída)
+  //
+  function renderDialingGuide(guide, origin) {
     const panel   = document.getElementById("dialing-panel");
     const content = document.getElementById("dialing-content");
     if (!guide) { panel.style.display = "none"; return; }
     panel.style.display = "block";
+
+    const isPbx = origin === "pbx";
+
+    // Gera strings de discagem conforme a origem
+    // Móvel/fixo:   0{código}+{DDI}{número}      ex: 021+15551234567
+    // Central PBX:  00{código}+{DDI}{número}     ex: 0021+15551234567
+    //   Nota: em muitas centrais o acesso à linha externa é 0 ou 9,
+    //   mas o padrão de saída internacional é 00 + operadora + DDI + número.
+    //   Deixamos isso como observação na nota contextual.
+    const dialPrefix = isPbx ? "00" : "0";
+
+    const carrierOptions = guide.dialingOptions.map(opt => ({
+      ...opt,
+      dialString: `${dialPrefix}${opt.carrierCode}+${guide.destinationDDI}${guide.destinationNumber}`,
+    }));
+
+    const noteText = isPbx
+      ? "Central Telefônica: use <strong>00</strong> para acessar a saída internacional, seguido do código da operadora + DDI + número. Verifique com o administrador se sua central usa prefixo de linha externo (0 ou 9) antes do 00."
+      : "Móvel / Linha fixa direta: use <strong>0</strong> + código da operadora de longa distância + DDI + número. Planos com CSP fixo podem não exigir o código da operadora.";
+
+    const noteClass = isPbx ? "pbx" : "mobile";
 
     let html = `
       <div class="dialing-header">
@@ -605,10 +502,29 @@
           <div class="dialing-ddi">DDI: +${guide.destinationDDI} · Destino: ${guide.destinationNumber}</div>
         </div>
       </div>
-      <div class="dialing-note">ℹ ${guide.note}</div>
-      <div class="dialing-options">`;
 
-    guide.dialingOptions.forEach(opt => {
+      <!-- Seletor de origem -->
+      <div class="origin-selector">
+        <button class="origin-btn ${!isPbx ? 'active' : ''}" onclick="setDialingOrigin('mobile')" title="Celular ou linha fixa residencial/corporativa direta">
+          <div class="origin-icon">📱</div>
+          <div class="origin-label">Móvel / Fixo</div>
+          <div class="origin-sublabel">Linha direta</div>
+          <div class="origin-indicator"></div>
+        </button>
+        <button class="origin-btn pbx ${isPbx ? 'active' : ''}" onclick="setDialingOrigin('pbx')" title="Ramal de central telefônica corporativa (PABX / IPPBX)">
+          <div class="origin-icon">🏢</div>
+          <div class="origin-label">Central Telefônica</div>
+          <div class="origin-sublabel">PABX / IP PBX</div>
+          <div class="origin-indicator"></div>
+        </button>
+      </div>
+
+      <div class="origin-note ${noteClass}">ℹ️ ${noteText}</div>
+
+      <div class="dialing-options">
+    `;
+
+    carrierOptions.forEach(opt => {
       html += `
         <div class="dialing-option" onclick="copyDial(this, '${opt.dialString}')">
           <div class="dial-left">
@@ -628,6 +544,12 @@
     content.innerHTML = html;
   }
 
+  // Troca origem e re-renderiza apenas o painel de discagem
+  function setDialingOrigin(origin) {
+    _dialingOrigin = origin;
+    if (_currentGuide) renderDialingGuide(_currentGuide, origin);
+  }
+
   function copyDial(el, str) {
     navigator.clipboard.writeText(str).then(() => {
       const cp = el.querySelector(".dial-copy");
@@ -637,7 +559,6 @@
   }
 
   // ── HELPERS ──────────────────────────────────────────────
-
   function kvRow(key, val, cls) {
     return `<div class="kv-row"><span class="kv-key">${key}</span><span class="kv-val ${cls}">${val}</span></div>`;
   }
