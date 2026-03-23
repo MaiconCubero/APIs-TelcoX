@@ -109,7 +109,27 @@ function analyzeWithLibphone(rawPhone) {
   }
 }
 
+function normalizePhoneQuery(rawPhone) {
+  if (rawPhone == null) return "";
+
+  const original = String(rawPhone);
+  const trimmed  = original.trim();
+
+  if (/^00\d/.test(trimmed)) {
+    return `+${trimmed.slice(2)}`;
+  }
+
+  // Requisições manuais como ?phone=+5511... chegam ao Express com o "+"
+  // convertido em espaço. Se detectarmos esse caso, restauramos o prefixo.
+  if (/^\d{8,15}$/.test(trimmed) && /^\s+\d/.test(original)) {
+    return `+${trimmed}`;
+  }
+
+  return trimmed;
+}
+
 // ─── Abstract: busca operadora ───────────────────────────────────────────────
+//
 //
 // A chave do Abstract fica somente no backend/proxy (Render), evitando expor
 // o segredo no frontend hospedado no GitHub Pages.
@@ -119,13 +139,17 @@ function analyzeWithLibphone(rawPhone) {
 async function fetchCarrierFromAbstract(e164Phone) {
   const key = process.env.ABSTRACT_API_KEY;
   if (!key) {
-    console.log("[Abstract] ABSTRACT_API_KEY não configurada — pulando.");
-    return null;
+       console.log("[Abstract] ABSTRACT_API_KEY não configurada — pulando.");
+    return {
+      carrier: null,
+      status:  "missing_api_key",
+      detail:  "ABSTRACT_API_KEY não configurada no backend.",
+    };
   }
-
+  const normalizedPhone = e164Phone.replace(/\D/g, "");
   const controller = new AbortController();
   const timer      = setTimeout(() => controller.abort(), 7000);
-
+   const url        = `https://phonevalidation.abstractapi.com/v1/?api_key=${encodeURIComponent(key)}&phone=${encodeURIComponent(normalizedPhone)}`;
    const url        = `https://phonevalidation.abstractapi.com/v1/?api_key=${encodeURIComponent(key)}&phone=${encodeURIComponent(e164Phone)}`;
 
   try {
@@ -134,24 +158,61 @@ async function fetchCarrierFromAbstract(e164Phone) {
 
     if (!res.ok) {
       console.warn(`[Abstract] HTTP ${res.status}`);
-      return null;
+      return {
+        carrier: null,
+        status:  "http_error",
+        detail:  `HTTP ${res.status}`,
+      };
     }
 
     const data = await res.json();
 
     if (data.error) {
       console.warn("[Abstract] Erro da API:", data.error?.message || data.error);
-      return null;
+      return {
+        carrier: null,
+        status:  "api_error",
+        detail:  data.error?.message || String(data.error),
+      };
+    }
+    // O Abstract já retornou carrier em formatos diferentes ao longo do tempo:
+    // mantemos compatibilidade com payloads novos (phone_carrier.name)
+    // e legados (carrier).
+    const carrierName =
+      data.phone_carrier?.name ||
+      data.carrier ||
+      null;
+
+    if (carrierName && carrierName.trim() !== "") {
+      return {
+        carrier: carrierName.trim(),
+        status:  "ok",
+        detail:  null,
+      };
     }
 
-    return data.carrier && data.carrier.trim() !== "" ? data.carrier.trim() : null;
+    return {
+      carrier: null,
+      status:  "no_carrier_returned",
+      detail:  "Abstract respondeu sem preencher o campo de operadora.",
+    };
 
   } catch (err) {
     clearTimeout(timer);
     if (err.name === "AbortError") {
-      console.warn("[Abstract] Timeout após 7s");
+         console.warn("[Abstract] Timeout após 7s");
+      return {
+        carrier: null,
+        status:  "timeout",
+        detail:  "Timeout após 7s",
+      };
     } else {
-      console.warn("[Abstract] Erro de rede:", err.message);
+         console.warn("[Abstract] Erro de rede:", err.message);
+      return {
+        carrier: null,
+        status:  "network_error",
+        detail:  err.message,
+      };
     }
     return null;
   }
@@ -262,11 +323,42 @@ function generateTroubleshootingHints(data, rawInput) {
   }
 
   if (!data.carrier) {
+        const carrierStatus = data.carrierLookupStatus || "no_carrier_returned";
+    const carrierDetail = data.carrierLookupDetail ? ` Detalhe: ${data.carrierLookupDetail}.` : "";
+
+    const statusMap = {
+      missing_api_key: {
+        message:    "Operadora não consultada: chave do Abstract ausente.",
+        suggestion: "Configure ABSTRACT_API_KEY no Render para habilitar a busca de operadora.",
+      },
+      http_error: {
+        message:    "Falha HTTP ao consultar a operadora no Abstract.",
+        suggestion: `Verifique a conectividade do Render e a resposta da API do Abstract.${carrierDetail}`,
+      },
+      api_error: {
+        message:    "Abstract recusou ou rejeitou a consulta da operadora.",
+        suggestion: `Verifique a validade da chave, cota da conta e parâmetros enviados.${carrierDetail}`,
+      },
+      timeout: {
+        message:    "Consulta da operadora expirou no Abstract.",
+        suggestion: `Tente novamente e valide a latência de saída do Render.${carrierDetail}`,
+      },
+      network_error: {
+        message:    "Erro de rede ao consultar a operadora no Abstract.",
+        suggestion: `Verifique DNS/egress do Render para o domínio do Abstract.${carrierDetail}`,
+      },
+      no_carrier_returned: {
+        message:    "Operadora não identificada via Abstract.",
+        suggestion: `O número foi validado, mas o Abstract não retornou carrier para ele.${carrierDetail}`,
+      },
+    };
+
+    const fallback = statusMap[carrierStatus] || statusMap.no_carrier_returned;
     hints.push({
       severity:   "info",
       code:       "CARRIER_UNKNOWN",
-      message:    "Operadora não identificada via Abstract.",
-      suggestion: "Configure ABSTRACT_API_KEY no Render ou consulte o CDR na plataforma de telefonia.",
+      message:    fallback.message,
+      suggestion: fallback.suggestion,
     });
   }
 
@@ -284,8 +376,8 @@ function generateTroubleshootingHints(data, rawInput) {
 
 // ─── Endpoint principal ───────────────────────────────────────────────────────
 
-app.get("/api/validate", async (req, res) => {
-  const { phone } = req.query;
+  const rawPhone = req.query.phone;
+  const phone    = normalizePhoneQuery(rawPhone);;
   if (!phone) {
     return res.status(400).json({ error: "Parâmetro 'phone' é obrigatório." });
   }
@@ -296,11 +388,14 @@ app.get("/api/validate", async (req, res) => {
     console.log(`[libphone] ${phone} → valid:${libData.valid} | type:${libData.type} | region:${libData.country?.code} | e164:${libData.format?.e164}`);
 
     // 2️⃣ Abstract — somente se número válido e E.164 disponível
-    let carrier       = null;
-    let carrierSource = "N/A";
+    let carrierLookupStatus = "not_attempted";
+    let carrierLookupDetail = null;
 
     if (libData.valid && libData.format?.e164) {
-      carrier = await fetchCarrierFromAbstract(libData.format.e164);
+      const carrierLookup = await fetchCarrierFromAbstract(libData.format.e164);
+      carrier = carrierLookup.carrier;
+      carrierLookupStatus = carrierLookup.status;
+      carrierLookupDetail = carrierLookup.detail;
       carrierSource = carrier ? "Abstract" : "Abstract (sem retorno)";
       console.log(`[carrier] ${carrierSource}: "${carrier}"`);
     }
@@ -309,7 +404,12 @@ app.get("/api/validate", async (req, res) => {
     const dialingGuide = buildDialingGuide(libData, phone);
 
     // 4️⃣ Hints de troubleshooting
-    const troubleshooting = generateTroubleshootingHints({ ...libData, carrier }, phone);
+      const troubleshooting = generateTroubleshootingHints({
+      ...libData,
+      carrier,
+      carrierLookupStatus,
+      carrierLookupDetail,
+    }, phone);
 
     return res.json({
       valid:   libData.valid,
@@ -324,6 +424,9 @@ app.get("/api/validate", async (req, res) => {
         version:       "2.3",
         phoneSource:   "libphonenumber",
         carrierSource,
+                carrierLookupStatus,
+        carrierLookupDetail,
+        normalizedQueryPhone: phone,
       },
     });
 
